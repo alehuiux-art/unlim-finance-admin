@@ -1,0 +1,1627 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Unlim · Финансовая админка</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          brand: {
+            DEFAULT: '#09AD64',
+            50:  '#E8F8F0',
+            100: '#CCEFDB',
+            200: '#9EE0B9',
+            500: '#09AD64',
+            600: '#08995A',
+            700: '#067A48',
+          },
+          ink:   { DEFAULT: '#2D4861', muted: '#888D97' },
+          surface: { DEFAULT: '#F0F1F5', card: '#FFFFFF' },
+          info:    '#2251AE',
+          warn:    '#FFC107',
+          danger:  '#C62A31',
+          cyan:    '#8be2e5',
+        },
+        fontFamily: {
+          sans: ['"Google Sans"', 'system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', 'sans-serif'],
+        },
+        boxShadow: {
+          card: '0 1px 2px rgba(45,72,97,0.04), 0 4px 16px rgba(45,72,97,0.05)',
+          pop:  '0 8px 24px rgba(45,72,97,0.12)',
+        },
+        borderRadius: { xl2: '14px' },
+      }
+    }
+  }
+</script>
+<style>
+  html, body { background:#F0F1F5; color:#2D4861; }
+  [data-lucide] { width:18px; height:18px; }
+  .nav-item { transition: background-color .15s ease, color .15s ease; }
+  .step-dot { width:10px; height:10px; border-radius:9999px; flex:none; }
+  .step-line { flex:1; height:2px; }
+  .pill { display:inline-flex; align-items:center; gap:6px; padding:3px 10px; border-radius:9999px; font-size:12px; font-weight:500; }
+  /* tiny chart bars */
+  .bar { background:#09AD64; border-radius:4px 4px 0 0; width:14px; }
+  /* entity links — inherit color, show on hover */
+  a.ent { color: inherit; text-decoration: none; }
+  a.ent:hover { color:#08995A; text-decoration: underline; text-decoration-thickness:1px; text-underline-offset:3px; }
+</style>
+</head>
+<body class="min-h-screen font-sans antialiased">
+
+<div class="flex min-h-screen">
+
+  <!-- SIDEBAR -->
+  <aside class="w-64 shrink-0 bg-white border-r border-black/5 flex flex-col">
+    <div class="h-16 flex items-center gap-2 px-6 border-b border-black/5">
+      <div class="w-9 h-9 rounded-xl bg-brand text-white grid place-items-center font-bold">U</div>
+      <div>
+        <div class="font-semibold leading-tight">Unlim Finance</div>
+        <div class="text-xs text-ink-muted leading-tight">Marketplace admin</div>
+      </div>
+    </div>
+
+    <nav class="p-3 space-y-1 text-sm">
+      <a href="#dashboard" data-nav="dashboard" class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-ink hover:bg-surface">
+        <i data-lucide="layout-dashboard"></i> Дашборд
+      </a>
+      <a href="#orders" data-nav="orders" class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-ink hover:bg-surface">
+        <i data-lucide="shopping-bag"></i> Заказы
+        <span class="ml-auto text-xs bg-surface text-ink-muted px-2 py-0.5 rounded-full">128</span>
+      </a>
+      <a href="#sellers" data-nav="sellers" class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-ink hover:bg-surface">
+        <i data-lucide="store"></i> Продавцы
+      </a>
+      <a href="#courier" data-nav="courier" class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-ink hover:bg-surface">
+        <i data-lucide="truck"></i> Курьерская служба
+      </a>
+      <a href="#payouts" data-nav="payouts" class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-ink hover:bg-surface">
+        <i data-lucide="wallet"></i> Выплаты
+      </a>
+    </nav>
+
+  </aside>
+
+  <!-- MAIN -->
+  <main class="flex-1 min-w-0">
+
+    <!-- TOPBAR -->
+    <header class="h-16 bg-white border-b border-black/5 flex items-center px-6 gap-4 sticky top-0 z-10">
+      <div class="relative flex-1 max-w-md">
+        <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 text-ink-muted"></i>
+        <input type="text" placeholder="Поиск по № заказа, продавцу, товару…"
+               class="w-full bg-surface rounded-lg pl-10 pr-3 py-2.5 text-sm placeholder:text-ink-muted focus:outline-none focus:ring-2 focus:ring-brand/30" />
+      </div>
+
+      <div class="flex items-center gap-3 pl-2 border-l border-black/5">
+        <div class="text-right leading-tight hidden sm:block">
+          <div class="text-sm font-semibold">Нино К.</div>
+          <div class="text-xs text-ink-muted">Бухгалтер</div>
+        </div>
+        <div class="w-9 h-9 rounded-full bg-cyan/40 grid place-items-center font-semibold text-info">НК</div>
+      </div>
+    </header>
+
+    <!-- PAGE -->
+    <div class="p-6">
+
+    <!-- ============ DASHBOARD ============ -->
+    <section data-page="dashboard" class="space-y-6">
+      <!-- Page header -->
+      <div>
+        <h1 class="text-2xl font-bold">Финансовый дашборд</h1>
+        <p class="text-sm text-ink-muted mt-1">Все денежные потоки маркетплейса в одном месте</p>
+      </div>
+
+      <!-- KPI cards -->
+      <section class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+
+        <div class="bg-white rounded-xl2 shadow-card p-5">
+          <div class="flex items-start justify-between">
+            <div>
+              <div class="text-xs uppercase tracking-wide text-ink-muted">На наших счетах</div>
+              <div class="text-2xl font-bold mt-1">₾ 84 320<span class="text-base font-medium text-ink-muted">,50</span></div>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-brand-50 text-brand grid place-items-center"><i data-lucide="wallet"></i></div>
+          </div>
+          <div class="mt-3 text-xs text-ink-muted">Из них к выплате продавцам: <span class="font-semibold text-ink">₾ 61 240</span></div>
+        </div>
+
+        <div class="bg-white rounded-xl2 shadow-card p-5">
+          <div class="flex items-start justify-between">
+            <div>
+              <div class="text-xs uppercase tracking-wide text-ink-muted">У курьерской службы</div>
+              <div class="text-2xl font-bold mt-1">₾ 27 815<span class="text-base font-medium text-ink-muted">,00</span></div>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-cyan/30 text-info grid place-items-center"><i data-lucide="truck"></i></div>
+          </div>
+          <div class="mt-3 text-xs text-ink-muted">Ожидается перевод по <span class="font-semibold text-ink">36</span> заказам</div>
+        </div>
+
+        <div class="bg-white rounded-xl2 shadow-card p-5">
+          <div class="flex items-start justify-between">
+            <div>
+              <div class="text-xs uppercase tracking-wide text-ink-muted">Долг продавцам</div>
+              <div class="text-2xl font-bold mt-1 text-danger">₾ 61 240<span class="text-base font-medium text-ink-muted">,80</span></div>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-danger/10 text-danger grid place-items-center"><i data-lucide="store"></i></div>
+          </div>
+          <div class="mt-3 text-xs text-ink-muted"><span class="font-semibold text-ink">14</span> продавцов · самый крупный: <span class="font-semibold text-ink">«Geo Tech»</span></div>
+        </div>
+
+        <div class="bg-white rounded-xl2 shadow-card p-5">
+          <div class="flex items-start justify-between">
+            <div>
+              <div class="text-xs uppercase tracking-wide text-ink-muted">Оборот за неделю</div>
+              <div class="text-2xl font-bold mt-1">₾ 142 780</div>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-brand-50 text-brand grid place-items-center"><i data-lucide="trending-up"></i></div>
+          </div>
+          <div class="mt-3 flex items-end gap-1 h-8">
+            <div class="bar" style="height:40%"></div>
+            <div class="bar" style="height:62%"></div>
+            <div class="bar" style="height:48%"></div>
+            <div class="bar" style="height:78%"></div>
+            <div class="bar" style="height:55%"></div>
+            <div class="bar" style="height:88%"></div>
+            <div class="bar" style="height:70%"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Two action zones -->
+      <section class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+
+        <!-- К получению от курьера -->
+        <div class="bg-white rounded-xl2 shadow-card overflow-hidden">
+          <div class="flex items-center justify-between px-5 py-4 border-b border-black/5">
+            <div>
+              <h2 class="font-semibold flex items-center gap-2"><i data-lucide="truck" class="text-info"></i> К получению от курьера</h2>
+              <p class="text-xs text-ink-muted mt-0.5">Подтвердите поступление средств на наш счёт</p>
+            </div>
+            <span class="pill bg-info/10 text-info">36 заказов · ₾ 27 815</span>
+          </div>
+
+          <ul class="divide-y divide-black/5">
+            <li class="px-5 py-3.5 flex items-center gap-4">
+              <input type="checkbox" class="w-4 h-4 rounded text-brand focus:ring-brand" />
+              <div class="flex-1 min-w-0">
+                <div class="font-medium truncate">Заказ <span class="text-info">#UN-10428</span> · <a class="ent" target="_blank" rel="noopener" href="https://unlim.ge/ru/post/airpods-pro-2-2026-05-27-18-41-03">Apple AirPods Pro</a></div>
+                <div class="text-xs text-ink-muted">Продавец «<a class="ent" target="_blank" rel="noopener" href="https://unlim.ge/ru/user/22222222-2222-2222-2222-222222222222/posts">Tech Store</a>» · клиент <a class="ent" target="_blank" rel="noopener" href="https://unlim.ge/ru/user/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1/posts">Levan G.</a> · 27.05</div>
+              </div>
+              <div class="text-right">
+                <div class="font-semibold">₾ 749,00</div>
+                <div class="text-xs text-ink-muted">+ доставка ₾ 8</div>
+              </div>
+              <button data-order="UN-10431" class="ml-2 inline-flex items-center gap-1.5 bg-brand text-white text-sm font-semibold rounded-lg px-3 py-2 hover:bg-brand-600">
+                <i data-lucide="check"></i> Подтвердить
+              </button>
+            </li>
+
+            <li class="px-5 py-3.5 flex items-center gap-4">
+              <input type="checkbox" class="w-4 h-4 rounded text-brand focus:ring-brand" />
+              <div class="flex-1 min-w-0">
+                <div class="font-medium truncate">Заказ <span class="text-info">#UN-10425</span> · <a class="ent" target="_blank" rel="noopener" href="https://unlim.ge/ru/post/bosch-twk-kettle-2026-05-27-09-14-22">Чайник Bosch TWK</a></div>
+                <div class="text-xs text-ink-muted">Продавец «<a class="ent" target="_blank" rel="noopener" href="https://unlim.ge/ru/user/33333333-3333-3333-3333-333333333333/posts">Home &amp; Co</a>» · клиент <a class="ent" target="_blank" rel="noopener" href="https://unlim.ge/ru/user/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa2/posts">Mariam B.</a> · 27.05</div>
+              </div>
+              <div class="text-right">
+                <div class="font-semibold">₾ 189,00</div>
+                <div class="text-xs text-ink-muted">+ доставка ₾ 5</div>
+              </div>
+              <button data-order="UN-10425" class="ml-2 inline-flex items-center gap-1.5 bg-brand text-white text-sm font-semibold rounded-lg px-3 py-2 hover:bg-brand-600">
+                <i data-lucide="check"></i> Подтвердить
+              </button>
+            </li>
+
+            <li class="px-5 py-3.5 flex items-center gap-4">
+              <input type="checkbox" class="w-4 h-4 rounded text-brand focus:ring-brand" />
+              <div class="flex-1 min-w-0">
+                <div class="font-medium truncate">Заказ <span class="text-info">#UN-10419</span> · <a class="ent" target="_blank" rel="noopener" href="https://unlim.ge/ru/post/delonghi-coffee-grinder-2026-05-26-11-30-08">Кофемолка De'Longhi</a></div>
+                <div class="text-xs text-ink-muted">Продавец «<a class="ent" target="_blank" rel="noopener" href="https://unlim.ge/ru/user/11111111-1111-1111-1111-111111111111/posts">Geo Tech</a>» · клиент <a class="ent" target="_blank" rel="noopener" href="https://unlim.ge/ru/user/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa4/posts">Nika A.</a> · 26.05</div>
+              </div>
+              <div class="text-right">
+                <div class="font-semibold">₾ 312,00</div>
+                <div class="text-xs text-ink-muted">+ доставка ₾ 6</div>
+              </div>
+              <button data-order="UN-10419" class="ml-2 inline-flex items-center gap-1.5 bg-brand text-white text-sm font-semibold rounded-lg px-3 py-2 hover:bg-brand-600">
+                <i data-lucide="check"></i> Подтвердить
+              </button>
+            </li>
+
+            <li class="px-5 py-3.5 flex items-center gap-4">
+              <input type="checkbox" class="w-4 h-4 rounded text-brand focus:ring-brand" />
+              <div class="flex-1 min-w-0">
+                <div class="font-medium truncate">Заказ <span class="text-info">#UN-10428</span> · <a class="ent" target="_blank" rel="noopener" href="https://unlim.ge/ru/post/nike-pegasus-2026-05-27-18-41-03">Кроссовки Nike Pegasus</a></div>
+                <div class="text-xs text-ink-muted">Продавец «<a class="ent" target="_blank" rel="noopener" href="https://unlim.ge/ru/user/44444444-4444-4444-4444-444444444444/posts">Sport Line</a>» · клиент <a class="ent" target="_blank" rel="noopener" href="https://unlim.ge/ru/user/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa3/posts">Giorgi M.</a> · 26.05</div>
+              </div>
+              <div class="text-right">
+                <div class="font-semibold">₾ 420,00</div>
+                <div class="text-xs text-ink-muted">+ доставка ₾ 7</div>
+              </div>
+              <button data-order="UN-10428" class="ml-2 inline-flex items-center gap-1.5 bg-brand text-white text-sm font-semibold rounded-lg px-3 py-2 hover:bg-brand-600">
+                <i data-lucide="check"></i> Подтвердить
+              </button>
+            </li>
+          </ul>
+
+          <div class="px-5 py-3 bg-surface flex items-center justify-between text-sm">
+            <label class="flex items-center gap-2 text-ink-muted">
+              <input type="checkbox" class="w-4 h-4 rounded text-brand"> Выбрать все
+            </label>
+            <button class="inline-flex items-center gap-1.5 text-brand-700 font-semibold hover:text-brand-600">
+              Подтвердить выбранные <i data-lucide="arrow-right"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Долг продавцам -->
+        <div class="bg-white rounded-xl2 shadow-card overflow-hidden">
+          <div class="flex items-center justify-between px-5 py-4 border-b border-black/5">
+            <div>
+              <h2 class="font-semibold flex items-center gap-2"><i data-lucide="store" class="text-danger"></i> Долг продавцам</h2>
+              <p class="text-xs text-ink-muted mt-0.5">Деньги уже у нас — пора выплатить</p>
+            </div>
+            <span class="pill bg-danger/10 text-danger">14 продавцов · ₾ 61 240</span>
+          </div>
+
+          <ul class="divide-y divide-black/5">
+            <li class="px-5 py-3.5 flex items-center gap-4">
+              <a class="ent" target="_blank" rel="noopener" href="https://unlim.ge/ru/user/11111111-1111-1111-1111-111111111111/posts" class="w-10 h-10 rounded-lg bg-brand-50 text-brand-700 grid place-items-center font-semibold">GT</a>
+              <div class="flex-1 min-w-0">
+                <div class="font-medium truncate"><a class="ent" target="_blank" rel="noopener" href="https://unlim.ge/ru/user/11111111-1111-1111-1111-111111111111/posts">Geo Tech</a></div>
+                <button data-items="GT" class="text-xs text-brand-700 hover:underline">12 товаров готовы к выплате →</button>
+              </div>
+              <div class="text-right">
+                <div class="font-semibold">₾ 14 820</div>
+                <div class="text-xs text-ink-muted">с 21.05</div>
+              </div>
+              <button data-payout="GT" class="ml-2 inline-flex items-center gap-1.5 border border-brand text-brand-700 text-sm font-semibold rounded-lg px-3 py-2 hover:bg-brand-50">
+                <i data-lucide="send"></i> Выплатить
+              </button>
+            </li>
+
+            <li class="px-5 py-3.5 flex items-center gap-4">
+              <a class="ent" target="_blank" rel="noopener" href="https://unlim.ge/ru/user/22222222-2222-2222-2222-222222222222/posts" class="w-10 h-10 rounded-lg bg-cyan/30 text-info grid place-items-center font-semibold">TS</a>
+              <div class="flex-1 min-w-0">
+                <div class="font-medium truncate"><a class="ent" target="_blank" rel="noopener" href="https://unlim.ge/ru/user/22222222-2222-2222-2222-222222222222/posts">Tech Store</a></div>
+                <button data-items="TS" class="text-xs text-brand-700 hover:underline">8 товаров готовы к выплате →</button>
+              </div>
+              <div class="text-right">
+                <div class="font-semibold">₾ 9 470</div>
+                <div class="text-xs text-ink-muted">с 22.05</div>
+              </div>
+              <button data-payout="TS" class="ml-2 inline-flex items-center gap-1.5 border border-brand text-brand-700 text-sm font-semibold rounded-lg px-3 py-2 hover:bg-brand-50">
+                <i data-lucide="send"></i> Выплатить
+              </button>
+            </li>
+
+            <li class="px-5 py-3.5 flex items-center gap-4">
+              <a class="ent" target="_blank" rel="noopener" href="https://unlim.ge/ru/user/33333333-3333-3333-3333-333333333333/posts" class="w-10 h-10 rounded-lg bg-warn/20 text-amber-700 grid place-items-center font-semibold">HC</a>
+              <div class="flex-1 min-w-0">
+                <div class="font-medium truncate"><a class="ent" target="_blank" rel="noopener" href="https://unlim.ge/ru/user/33333333-3333-3333-3333-333333333333/posts">Home &amp; Co</a></div>
+                <button data-items="HC" class="text-xs text-brand-700 hover:underline">5 товаров готовы к выплате →</button>
+              </div>
+              <div class="text-right">
+                <div class="font-semibold">₾ 6 210</div>
+                <div class="text-xs text-ink-muted">с 23.05</div>
+              </div>
+              <button data-payout="HC" class="ml-2 inline-flex items-center gap-1.5 border border-brand text-brand-700 text-sm font-semibold rounded-lg px-3 py-2 hover:bg-brand-50">
+                <i data-lucide="send"></i> Выплатить
+              </button>
+            </li>
+
+            <li class="px-5 py-3.5 flex items-center gap-4">
+              <a class="ent" target="_blank" rel="noopener" href="https://unlim.ge/ru/user/44444444-4444-4444-4444-444444444444/posts" class="w-10 h-10 rounded-lg bg-danger/10 text-danger grid place-items-center font-semibold">SL</a>
+              <div class="flex-1 min-w-0">
+                <div class="font-medium truncate"><a class="ent" target="_blank" rel="noopener" href="https://unlim.ge/ru/user/44444444-4444-4444-4444-444444444444/posts">Sport Line</a></div>
+                <button data-items="SL" class="text-xs text-brand-700 hover:underline">4 товара готовы к выплате →</button>
+              </div>
+              <div class="text-right">
+                <div class="font-semibold">₾ 4 980</div>
+                <div class="text-xs text-ink-muted">с 24.05</div>
+              </div>
+              <button data-payout="SL" class="ml-2 inline-flex items-center gap-1.5 border border-brand text-brand-700 text-sm font-semibold rounded-lg px-3 py-2 hover:bg-brand-50">
+                <i data-lucide="send"></i> Выплатить
+              </button>
+            </li>
+          </ul>
+
+          <div class="px-5 py-3 bg-surface flex items-center justify-between text-sm">
+            <span class="text-ink-muted">Показано 4 из 14</span>
+            <a href="#" class="inline-flex items-center gap-1.5 text-brand-700 font-semibold hover:text-brand-600">
+              Все продавцы <i data-lucide="arrow-right"></i>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- Orders table with timeline -->
+      <section class="bg-white rounded-xl2 shadow-card overflow-hidden">
+        <div class="flex items-center justify-between px-5 py-4 border-b border-black/5">
+          <div>
+            <h2 class="font-semibold">Последние заказы</h2>
+            <p class="text-xs text-ink-muted mt-0.5">Финансовый статус по каждому товару</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button class="pill bg-brand-50 text-brand-700">Все</button>
+            <button class="pill bg-surface text-ink-muted hover:bg-black/5">Ждут курьера</button>
+            <button class="pill bg-surface text-ink-muted hover:bg-black/5">К выплате</button>
+            <button class="pill bg-surface text-ink-muted hover:bg-black/5">Завершено</button>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead class="text-left text-xs uppercase tracking-wide text-ink-muted bg-surface">
+              <tr>
+                <th class="px-5 py-3 font-medium">Заказ</th>
+                <th class="px-5 py-3 font-medium">Продавец</th>
+                <th class="px-5 py-3 font-medium">Товар</th>
+                <th class="px-5 py-3 font-medium text-right">Сумма</th>
+                <th class="px-5 py-3 font-medium w-[340px]">Финансовый статус</th>
+                <th class="px-5 py-3"></th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-black/5">
+
+              <!-- Row 1: prepaid online — all green except payout -->
+              <tr class="hover:bg-surface/60">
+                <td class="px-5 py-4">
+                  <div class="font-semibold text-info">#UN-10432</div>
+                  <div class="text-xs text-ink-muted">28.05 · 14:22</div>
+                </td>
+                <td class="px-5 py-4"><a class="ent" target="_blank" rel="noopener" href="https://unlim.ge/ru/user/11111111-1111-1111-1111-111111111111/posts">Geo Tech</a></td>
+                <td class="px-5 py-4"><a class="ent" target="_blank" rel="noopener" href="https://unlim.ge/ru/post/iphone-15-128gb-2026-05-28-14-22-01">iPhone 15, 128 ГБ</a></td>
+                <td class="px-5 py-4 text-right">
+                  <div class="font-semibold">₾ 2 690</div>
+                  <div class="text-xs text-ink-muted">+ ₾ 9 дост.</div>
+                </td>
+                <td class="px-5 py-4">
+                  <div class="flex items-center">
+                    <div class="step-dot bg-brand" title="Доставка оплачена"></div>
+                    <div class="step-line bg-brand"></div>
+                    <div class="step-dot bg-brand" title="Товар оплачен онлайн"></div>
+                    <div class="step-line bg-brand"></div>
+                    <div class="step-dot bg-brand" title="Деньги у нас"></div>
+                    <div class="step-line bg-black/10"></div>
+                    <div class="step-dot bg-black/15" title="Выплата продавцу"></div>
+                  </div>
+                  <div class="text-xs text-ink-muted mt-1.5">Деньги у нас · ждёт выплаты</div>
+                </td>
+                <td class="px-5 py-4 text-right">
+                  <button data-order="UN-10432" class="text-brand-700 font-semibold text-sm hover:underline">Выплатить</button>
+                </td>
+              </tr>
+
+              <!-- Row 2: cash on delivery — courier holds money -->
+              <tr class="hover:bg-surface/60">
+                <td class="px-5 py-4">
+                  <div class="font-semibold text-info">#UN-10431</div>
+                  <div class="text-xs text-ink-muted">28.05 · 12:08</div>
+                </td>
+                <td class="px-5 py-4"><a class="ent" target="_blank" rel="noopener" href="https://unlim.ge/ru/user/22222222-2222-2222-2222-222222222222/posts">Tech Store</a></td>
+                <td class="px-5 py-4"><a class="ent" target="_blank" rel="noopener" href="https://unlim.ge/ru/post/airpods-pro-2-2026-05-28-12-08-15">AirPods Pro 2</a></td>
+                <td class="px-5 py-4 text-right">
+                  <div class="font-semibold">₾ 749</div>
+                  <div class="text-xs text-ink-muted">+ ₾ 8 дост.</div>
+                </td>
+                <td class="px-5 py-4">
+                  <div class="flex items-center">
+                    <div class="step-dot bg-brand"></div>
+                    <div class="step-line bg-brand"></div>
+                    <div class="step-dot bg-warn" title="Оплата налом курьеру"></div>
+                    <div class="step-line bg-black/10"></div>
+                    <div class="step-dot bg-black/15"></div>
+                    <div class="step-line bg-black/10"></div>
+                    <div class="step-dot bg-black/15"></div>
+                  </div>
+                  <div class="text-xs text-ink-muted mt-1.5">У курьера · ждём перевод</div>
+                </td>
+                <td class="px-5 py-4 text-right">
+                  <button data-order="UN-10431" class="text-ink-muted text-sm hover:text-ink">Детали</button>
+                </td>
+              </tr>
+
+              <!-- Row 3: courier transferred — ready to confirm -->
+              <tr class="hover:bg-surface/60">
+                <td class="px-5 py-4">
+                  <div class="font-semibold text-info">#UN-10428</div>
+                  <div class="text-xs text-ink-muted">27.05 · 18:41</div>
+                </td>
+                <td class="px-5 py-4"><a class="ent" target="_blank" rel="noopener" href="https://unlim.ge/ru/user/44444444-4444-4444-4444-444444444444/posts">Sport Line</a></td>
+                <td class="px-5 py-4"><a class="ent" target="_blank" rel="noopener" href="https://unlim.ge/ru/post/nike-pegasus-2026-05-27-18-41-03">Кроссовки Nike Pegasus</a></td>
+                <td class="px-5 py-4 text-right">
+                  <div class="font-semibold">₾ 420</div>
+                  <div class="text-xs text-ink-muted">+ ₾ 7 дост.</div>
+                </td>
+                <td class="px-5 py-4">
+                  <div class="flex items-center">
+                    <div class="step-dot bg-brand"></div>
+                    <div class="step-line bg-brand"></div>
+                    <div class="step-dot bg-brand"></div>
+                    <div class="step-line bg-brand"></div>
+                    <div class="step-dot ring-2 ring-info bg-white" title="Подтвердите получение"></div>
+                    <div class="step-line bg-black/10"></div>
+                    <div class="step-dot bg-black/15"></div>
+                  </div>
+                  <div class="text-xs text-info font-medium mt-1.5">Курьер перевёл · подтвердите</div>
+                </td>
+                <td class="px-5 py-4 text-right">
+                  <button data-order="UN-10428" class="bg-brand text-white text-sm font-semibold rounded-lg px-3 py-1.5 hover:bg-brand-600">
+                    Подтвердить
+                  </button>
+                </td>
+              </tr>
+
+              <!-- Row 4: fully settled -->
+              <tr class="hover:bg-surface/60">
+                <td class="px-5 py-4">
+                  <div class="font-semibold text-info">#UN-10410</div>
+                  <div class="text-xs text-ink-muted">25.05 · 09:30</div>
+                </td>
+                <td class="px-5 py-4"><a class="ent" target="_blank" rel="noopener" href="https://unlim.ge/ru/user/33333333-3333-3333-3333-333333333333/posts">Home &amp; Co</a></td>
+                <td class="px-5 py-4"><a class="ent" target="_blank" rel="noopener" href="https://unlim.ge/ru/post/bosch-twk-kettle-2026-05-25-09-30-44">Чайник Bosch TWK</a></td>
+                <td class="px-5 py-4 text-right">
+                  <div class="font-semibold">₾ 189</div>
+                  <div class="text-xs text-ink-muted">+ ₾ 5 дост.</div>
+                </td>
+                <td class="px-5 py-4">
+                  <div class="flex items-center">
+                    <div class="step-dot bg-brand"></div>
+                    <div class="step-line bg-brand"></div>
+                    <div class="step-dot bg-brand"></div>
+                    <div class="step-line bg-brand"></div>
+                    <div class="step-dot bg-brand"></div>
+                    <div class="step-line bg-brand"></div>
+                    <div class="step-dot bg-brand"></div>
+                  </div>
+                  <div class="text-xs text-brand-700 font-medium mt-1.5 inline-flex items-center gap-1">
+                    <i data-lucide="check-circle-2"></i> Закрыт
+                  </div>
+                </td>
+                <td class="px-5 py-4 text-right">
+                  <button data-order="UN-10410" class="text-ink-muted text-sm hover:text-ink">Детали</button>
+                </td>
+              </tr>
+
+              <!-- Row 5: cancelled -->
+              <tr class="hover:bg-surface/60">
+                <td class="px-5 py-4">
+                  <div class="font-semibold text-info">#UN-10407</div>
+                  <div class="text-xs text-ink-muted">24.05 · 16:12</div>
+                </td>
+                <td class="px-5 py-4"><a class="ent" target="_blank" rel="noopener" href="https://unlim.ge/ru/user/11111111-1111-1111-1111-111111111111/posts">Geo Tech</a></td>
+                <td class="px-5 py-4"><a class="ent" target="_blank" rel="noopener" href="https://unlim.ge/ru/post/ps5-slim-2026-05-24-16-12-09">PlayStation 5 Slim</a></td>
+                <td class="px-5 py-4 text-right">
+                  <div class="font-semibold">₾ 1 890</div>
+                  <div class="text-xs text-ink-muted">отмена</div>
+                </td>
+                <td class="px-5 py-4">
+                  <div class="flex items-center">
+                    <div class="step-dot bg-danger"></div>
+                    <div class="step-line bg-black/10"></div>
+                    <div class="step-dot bg-black/15"></div>
+                    <div class="step-line bg-black/10"></div>
+                    <div class="step-dot bg-black/15"></div>
+                    <div class="step-line bg-black/10"></div>
+                    <div class="step-dot bg-black/15"></div>
+                  </div>
+                  <div class="text-xs text-danger font-medium mt-1.5">Отменён · возврат доставки</div>
+                </td>
+                <td class="px-5 py-4 text-right">
+                  <button data-order="UN-10407" class="text-ink-muted text-sm hover:text-ink">Детали</button>
+                </td>
+              </tr>
+
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Legend -->
+        <div class="px-5 py-3 border-t border-black/5 bg-surface flex flex-wrap gap-x-5 gap-y-1.5 text-xs text-ink-muted">
+          <span class="inline-flex items-center gap-1.5"><span class="step-dot bg-brand"></span> Доставка оплачена</span>
+          <span class="inline-flex items-center gap-1.5"><span class="step-dot bg-brand"></span> Товар оплачен</span>
+          <span class="inline-flex items-center gap-1.5"><span class="step-dot bg-warn"></span> Налично у курьера</span>
+          <span class="inline-flex items-center gap-1.5"><span class="step-dot bg-white ring-2 ring-info"></span> Ждёт подтверждения</span>
+          <span class="inline-flex items-center gap-1.5"><span class="step-dot bg-brand"></span> Выплачено продавцу</span>
+          <span class="inline-flex items-center gap-1.5"><span class="step-dot bg-danger"></span> Отмена</span>
+        </div>
+      </section>
+
+    </section>
+    <!-- /DASHBOARD -->
+
+    <!-- ============ ORDERS ============ -->
+    <section data-page="orders" class="space-y-6 hidden">
+      <div>
+        <h1 class="text-2xl font-bold">Заказы</h1>
+        <p class="text-sm text-ink-muted mt-1">Все заказы маркетплейса и их финансовый статус</p>
+      </div>
+
+      <!-- FILTER PANEL -->
+      <div class="bg-white rounded-xl2 shadow-card p-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-3">
+          <div>
+            <label class="block text-xs font-medium text-ink-muted mb-1">Период с</label>
+            <div class="relative">
+              <i data-lucide="calendar" class="absolute left-3 top-1/2 -translate-y-1/2 text-ink-muted" style="width:16px;height:16px"></i>
+              <input type="date" value="2026-05-01" class="w-full bg-surface rounded-lg pl-9 pr-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand/30" />
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-ink-muted mb-1">Период по</label>
+            <div class="relative">
+              <i data-lucide="calendar" class="absolute left-3 top-1/2 -translate-y-1/2 text-ink-muted" style="width:16px;height:16px"></i>
+              <input type="date" value="2026-05-28" class="w-full bg-surface rounded-lg pl-9 pr-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand/30" />
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-ink-muted mb-1">Продавец</label>
+            <select class="w-full bg-surface rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand/30">
+              <option>Все продавцы</option>
+              <option>Geo Tech</option>
+              <option>Tech Store</option>
+              <option>Home &amp; Co</option>
+              <option>Sport Line</option>
+              <option>Book Kiosk</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-ink-muted mb-1">Способ оплаты товара</label>
+            <select class="w-full bg-surface rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand/30">
+              <option>Любой</option>
+              <option>Картой онлайн</option>
+              <option>Наличными курьеру</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-ink-muted mb-1">Сумма, ₾</label>
+            <div class="flex gap-2">
+              <input type="number" placeholder="от" class="w-1/2 bg-surface rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand/30" />
+              <input type="number" placeholder="до" class="w-1/2 bg-surface rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand/30" />
+            </div>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between mt-4 pt-4 border-t border-black/5">
+          <div class="flex items-center gap-3 text-xs text-ink-muted flex-wrap">
+            <span class="pill bg-brand-50 text-brand-700 inline-flex items-center gap-1.5">
+              За май 2026 <button class="hover:text-brand-600"><i data-lucide="x" style="width:12px;height:12px"></i></button>
+            </span>
+            <span>Найдено: <span class="font-semibold text-ink">7</span> из 128</span>
+          </div>
+          <div class="flex gap-2">
+            <button class="text-sm font-medium text-ink-muted hover:text-ink px-3 py-2">Сбросить</button>
+            <button class="inline-flex items-center gap-2 bg-brand text-white rounded-lg px-4 py-2 text-sm font-semibold hover:bg-brand-600">
+              Применить
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="bg-white rounded-xl2 shadow-card p-4">
+          <div class="text-xs uppercase tracking-wide text-ink-muted">Всего заказов</div>
+          <div class="text-xl font-bold mt-1">128</div>
+        </div>
+        <div class="bg-white rounded-xl2 shadow-card p-4">
+          <div class="text-xs uppercase tracking-wide text-ink-muted">В обработке</div>
+          <div class="text-xl font-bold mt-1 text-warn">42</div>
+        </div>
+        <div class="bg-white rounded-xl2 shadow-card p-4">
+          <div class="text-xs uppercase tracking-wide text-ink-muted">Ждут подтверждения</div>
+          <div class="text-xl font-bold mt-1 text-info">36</div>
+        </div>
+        <div class="bg-white rounded-xl2 shadow-card p-4">
+          <div class="text-xs uppercase tracking-wide text-ink-muted">Закрыто</div>
+          <div class="text-xl font-bold mt-1 text-brand">47</div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl2 shadow-card overflow-hidden">
+        <div class="flex items-center justify-between px-5 py-4 border-b border-black/5 flex-wrap gap-3">
+          <div class="flex items-center gap-2 flex-wrap">
+            <button class="pill bg-brand-50 text-brand-700">Все · 128</button>
+            <button class="pill bg-surface text-ink-muted hover:bg-black/5">У курьера · 36</button>
+            <button class="pill bg-surface text-ink-muted hover:bg-black/5">К подтверждению · 12</button>
+            <button class="pill bg-surface text-ink-muted hover:bg-black/5">К выплате · 33</button>
+            <button class="pill bg-surface text-ink-muted hover:bg-black/5">Закрыто · 47</button>
+          </div>
+          <div class="relative">
+            <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 text-ink-muted"></i>
+            <input type="text" placeholder="Поиск…" class="bg-surface rounded-lg pl-9 pr-3 py-2 text-sm w-56 focus:outline-none focus:ring-2 focus:ring-brand/30" />
+          </div>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead class="text-left text-xs uppercase tracking-wide text-ink-muted bg-surface">
+              <tr>
+                <th class="px-5 py-3 font-medium">Заказ</th>
+                <th class="px-5 py-3 font-medium">Продавец</th>
+                <th class="px-5 py-3 font-medium">Товар</th>
+                <th class="px-5 py-3 font-medium">Клиент</th>
+                <th class="px-5 py-3 font-medium text-right">Сумма</th>
+                <th class="px-5 py-3 font-medium">Статус</th>
+                <th class="px-5 py-3"></th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-black/5">
+              <tr class="hover:bg-surface/60">
+                <td class="px-5 py-3.5"><div class="font-semibold text-info">#UN-10432</div><div class="text-xs text-ink-muted">28.05</div></td>
+                <td class="px-5 py-3.5"><a class="ent" target="_blank" rel="noopener" href="https://unlim.ge/ru/user/11111111-1111-1111-1111-111111111111/posts">Geo Tech</a></td>
+                <td class="px-5 py-3.5"><a class="ent" target="_blank" rel="noopener" href="https://unlim.ge/ru/post/iphone-15-128gb-2026-05-28-14-22-01">iPhone 15, 128 ГБ</a></td>
+                <td class="px-5 py-3.5"><a class="ent" target="_blank" rel="noopener" href="https://unlim.ge/ru/user/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1/posts">Levan G.</a></td>
+                <td class="px-5 py-3.5 text-right font-semibold">₾ 2 690</td>
+                <td class="px-5 py-3.5"><span class="pill bg-brand-50 text-brand-700">К выплате</span></td>
+                <td class="px-5 py-3.5 text-right"><button data-order="UN-10432" class="text-brand-700 font-semibold text-sm hover:underline">Открыть</button></td>
+              </tr>
+              <tr class="hover:bg-surface/60">
+                <td class="px-5 py-3.5"><div class="font-semibold text-info">#UN-10431</div><div class="text-xs text-ink-muted">28.05</div></td>
+                <td class="px-5 py-3.5"><a class="ent" target="_blank" rel="noopener" href="https://unlim.ge/ru/user/22222222-2222-2222-2222-222222222222/posts">Tech Store</a></td>
+                <td class="px-5 py-3.5"><a class="ent" target="_blank" rel="noopener" href="https://unlim.ge/ru/post/airpods-pro-2-2026-05-28-12-08-15">AirPods Pro 2</a></td>
+                <td class="px-5 py-3.5"><a class="ent" target="_blank" rel="noopener" href="https://unlim.ge/ru/user/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa2/posts">Mariam B.</a></td>
+                <td class="px-5 py-3.5 text-right font-semibold">₾ 749</td>
+                <td class="px-5 py-3.5"><span class="pill bg-warn/20 text-amber-700">У курьера</span></td>
+                <td class="px-5 py-3.5 text-right"><button data-order="UN-10431" class="text-brand-700 font-semibold text-sm hover:underline">Открыть</button></td>
+              </tr>
+              <tr class="hover:bg-surface/60">
+                <td class="px-5 py-3.5"><div class="font-semibold text-info">#UN-10428</div><div class="text-xs text-ink-muted">27.05</div></td>
+                <td class="px-5 py-3.5"><a class="ent" target="_blank" rel="noopener" href="https://unlim.ge/ru/user/44444444-4444-4444-4444-444444444444/posts">Sport Line</a></td>
+                <td class="px-5 py-3.5"><a class="ent" target="_blank" rel="noopener" href="https://unlim.ge/ru/post/nike-pegasus-2026-05-27-18-41-03">Кроссовки Nike Pegasus</a></td>
+                <td class="px-5 py-3.5"><a class="ent" target="_blank" rel="noopener" href="https://unlim.ge/ru/user/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa3/posts">Giorgi M.</a></td>
+                <td class="px-5 py-3.5 text-right font-semibold">₾ 420</td>
+                <td class="px-5 py-3.5"><span class="pill bg-info/10 text-info">К подтверждению</span></td>
+                <td class="px-5 py-3.5 text-right"><button data-order="UN-10428" class="bg-brand text-white text-sm font-semibold rounded-lg px-3 py-1.5 hover:bg-brand-600">Подтвердить</button></td>
+              </tr>
+              <tr class="hover:bg-surface/60">
+                <td class="px-5 py-3.5"><div class="font-semibold text-info">#UN-10425</div><div class="text-xs text-ink-muted">27.05</div></td>
+                <td class="px-5 py-3.5"><a class="ent" target="_blank" rel="noopener" href="https://unlim.ge/ru/user/33333333-3333-3333-3333-333333333333/posts">Home &amp; Co</a></td>
+                <td class="px-5 py-3.5"><a class="ent" target="_blank" rel="noopener" href="https://unlim.ge/ru/post/bosch-twk-kettle-2026-05-27-09-14-22">Чайник Bosch TWK</a></td>
+                <td class="px-5 py-3.5"><a class="ent" target="_blank" rel="noopener" href="https://unlim.ge/ru/user/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa4/posts">Nika A.</a></td>
+                <td class="px-5 py-3.5 text-right font-semibold">₾ 189</td>
+                <td class="px-5 py-3.5"><span class="pill bg-warn/20 text-amber-700">У курьера</span></td>
+                <td class="px-5 py-3.5 text-right"><button data-order="UN-10425" class="text-brand-700 font-semibold text-sm hover:underline">Открыть</button></td>
+              </tr>
+              <tr class="hover:bg-surface/60">
+                <td class="px-5 py-3.5"><div class="font-semibold text-info">#UN-10419</div><div class="text-xs text-ink-muted">26.05</div></td>
+                <td class="px-5 py-3.5"><a class="ent" target="_blank" rel="noopener" href="https://unlim.ge/ru/user/11111111-1111-1111-1111-111111111111/posts">Geo Tech</a></td>
+                <td class="px-5 py-3.5"><a class="ent" target="_blank" rel="noopener" href="https://unlim.ge/ru/post/delonghi-coffee-grinder-2026-05-26-11-30-08">Кофемолка De'Longhi</a></td>
+                <td class="px-5 py-3.5"><a class="ent" target="_blank" rel="noopener" href="https://unlim.ge/ru/user/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa5/posts">Tamta L.</a></td>
+                <td class="px-5 py-3.5 text-right font-semibold">₾ 312</td>
+                <td class="px-5 py-3.5"><span class="pill bg-info/10 text-info">К подтверждению</span></td>
+                <td class="px-5 py-3.5 text-right"><button data-order="UN-10419" class="bg-brand text-white text-sm font-semibold rounded-lg px-3 py-1.5 hover:bg-brand-600">Подтвердить</button></td>
+              </tr>
+              <tr class="hover:bg-surface/60">
+                <td class="px-5 py-3.5"><div class="font-semibold text-info">#UN-10410</div><div class="text-xs text-ink-muted">25.05</div></td>
+                <td class="px-5 py-3.5"><a class="ent" target="_blank" rel="noopener" href="https://unlim.ge/ru/user/33333333-3333-3333-3333-333333333333/posts">Home &amp; Co</a></td>
+                <td class="px-5 py-3.5"><a class="ent" target="_blank" rel="noopener" href="https://unlim.ge/ru/post/tefal-toaster-2026-05-25-09-30-44">Тостер Tefal</a></td>
+                <td class="px-5 py-3.5"><a class="ent" target="_blank" rel="noopener" href="https://unlim.ge/ru/user/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa6/posts">Beka T.</a></td>
+                <td class="px-5 py-3.5 text-right font-semibold">₾ 145</td>
+                <td class="px-5 py-3.5"><span class="pill bg-brand/10 text-brand-700">Закрыт</span></td>
+                <td class="px-5 py-3.5 text-right"><button data-order="UN-10410" class="text-ink-muted text-sm hover:text-ink">Детали</button></td>
+              </tr>
+              <tr class="hover:bg-surface/60">
+                <td class="px-5 py-3.5"><div class="font-semibold text-info">#UN-10407</div><div class="text-xs text-ink-muted">24.05</div></td>
+                <td class="px-5 py-3.5"><a class="ent" target="_blank" rel="noopener" href="https://unlim.ge/ru/user/11111111-1111-1111-1111-111111111111/posts">Geo Tech</a></td>
+                <td class="px-5 py-3.5"><a class="ent" target="_blank" rel="noopener" href="https://unlim.ge/ru/post/ps5-slim-2026-05-24-16-12-09">PlayStation 5 Slim</a></td>
+                <td class="px-5 py-3.5"><a class="ent" target="_blank" rel="noopener" href="https://unlim.ge/ru/user/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa7/posts">Saba R.</a></td>
+                <td class="px-5 py-3.5 text-right font-semibold">₾ 1 890</td>
+                <td class="px-5 py-3.5"><span class="pill bg-danger/10 text-danger">Отменён</span></td>
+                <td class="px-5 py-3.5 text-right"><button data-order="UN-10407" class="text-ink-muted text-sm hover:text-ink">Детали</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="px-5 py-3 border-t border-black/5 bg-surface flex items-center justify-between text-sm">
+          <span class="text-ink-muted">Показано 7 из 128</span>
+          <div class="flex items-center gap-1">
+            <button class="w-8 h-8 grid place-items-center rounded-lg hover:bg-black/5"><i data-lucide="chevron-left"></i></button>
+            <button class="w-8 h-8 rounded-lg bg-brand text-white font-semibold">1</button>
+            <button class="w-8 h-8 rounded-lg hover:bg-black/5">2</button>
+            <button class="w-8 h-8 rounded-lg hover:bg-black/5">3</button>
+            <span class="text-ink-muted px-1">…</span>
+            <button class="w-8 h-8 rounded-lg hover:bg-black/5">19</button>
+            <button class="w-8 h-8 grid place-items-center rounded-lg hover:bg-black/5"><i data-lucide="chevron-right"></i></button>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- /ORDERS -->
+
+    <!-- ============ SELLERS ============ -->
+    <section data-page="sellers" class="space-y-6 hidden">
+      <div>
+        <h1 class="text-2xl font-bold">Продавцы</h1>
+        <p class="text-sm text-ink-muted mt-1">Долги маркетплейса перед продавцами по товарам</p>
+      </div>
+
+      <div class="bg-white rounded-xl2 shadow-card overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead class="text-left text-xs uppercase tracking-wide text-ink-muted bg-surface">
+              <tr>
+                <th class="px-5 py-3 font-medium">Продавец</th>
+                <th class="px-5 py-3 font-medium">Активных товаров</th>
+                <th class="px-5 py-3 font-medium">Продаж за месяц</th>
+                <th class="px-5 py-3 font-medium text-right">Долг</th>
+                <th class="px-5 py-3 font-medium text-right">Готовы к выплате</th>
+                <th class="px-5 py-3"></th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-black/5">
+              <tr class="hover:bg-surface/60">
+                <td class="px-5 py-3.5">
+                  <div class="flex items-center gap-3">
+                    <a class="ent" target="_blank" rel="noopener" href="https://unlim.ge/ru/user/11111111-1111-1111-1111-111111111111/posts" class="w-9 h-9 rounded-lg bg-brand-50 text-brand-700 grid place-items-center font-semibold">GT</a>
+                    <div>
+                      <div class="font-medium"><a class="ent" target="_blank" rel="noopener" href="https://unlim.ge/ru/user/11111111-1111-1111-1111-111111111111/posts">Geo Tech</a></div>
+                      <div class="text-xs text-ink-muted">tech@geotech.ge</div>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-5 py-3.5">87</td>
+                <td class="px-5 py-3.5">52</td>
+                <td class="px-5 py-3.5 text-right font-semibold text-danger">₾ 14 820</td>
+                <td class="px-5 py-3.5 text-right"><button data-items="GT" class="inline-flex items-center gap-1 text-brand-700 font-medium hover:underline">12 товаров <i data-lucide="chevron-right" style="width:14px;height:14px"></i></button></td>
+                <td class="px-5 py-3.5 text-right"><button data-payout="GT" class="bg-brand text-white text-sm font-semibold rounded-lg px-3 py-1.5 hover:bg-brand-600">Выплатить</button></td>
+              </tr>
+              <tr class="hover:bg-surface/60">
+                <td class="px-5 py-3.5">
+                  <div class="flex items-center gap-3">
+                    <a class="ent" target="_blank" rel="noopener" href="https://unlim.ge/ru/user/22222222-2222-2222-2222-222222222222/posts" class="w-9 h-9 rounded-lg bg-cyan/30 text-info grid place-items-center font-semibold">TS</a>
+                    <div>
+                      <div class="font-medium"><a class="ent" target="_blank" rel="noopener" href="https://unlim.ge/ru/user/22222222-2222-2222-2222-222222222222/posts">Tech Store</a></div>
+                      <div class="text-xs text-ink-muted">info@techstore.ge</div>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-5 py-3.5">42</td>
+                <td class="px-5 py-3.5">31</td>
+                <td class="px-5 py-3.5 text-right font-semibold text-danger">₾ 9 470</td>
+                <td class="px-5 py-3.5 text-right"><button data-items="TS" class="inline-flex items-center gap-1 text-brand-700 font-medium hover:underline">8 товаров <i data-lucide="chevron-right" style="width:14px;height:14px"></i></button></td>
+                <td class="px-5 py-3.5 text-right"><button data-payout="TS" class="bg-brand text-white text-sm font-semibold rounded-lg px-3 py-1.5 hover:bg-brand-600">Выплатить</button></td>
+              </tr>
+              <tr class="hover:bg-surface/60">
+                <td class="px-5 py-3.5">
+                  <div class="flex items-center gap-3">
+                    <a class="ent" target="_blank" rel="noopener" href="https://unlim.ge/ru/user/33333333-3333-3333-3333-333333333333/posts" class="w-9 h-9 rounded-lg bg-warn/20 text-amber-700 grid place-items-center font-semibold">HC</a>
+                    <div>
+                      <div class="font-medium"><a class="ent" target="_blank" rel="noopener" href="https://unlim.ge/ru/user/33333333-3333-3333-3333-333333333333/posts">Home &amp; Co</a></div>
+                      <div class="text-xs text-ink-muted">sales@homeco.ge</div>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-5 py-3.5">128</td>
+                <td class="px-5 py-3.5">64</td>
+                <td class="px-5 py-3.5 text-right font-semibold text-danger">₾ 6 210</td>
+                <td class="px-5 py-3.5 text-right"><button data-items="HC" class="inline-flex items-center gap-1 text-brand-700 font-medium hover:underline">5 товаров <i data-lucide="chevron-right" style="width:14px;height:14px"></i></button></td>
+                <td class="px-5 py-3.5 text-right"><button data-payout="HC" class="bg-brand text-white text-sm font-semibold rounded-lg px-3 py-1.5 hover:bg-brand-600">Выплатить</button></td>
+              </tr>
+              <tr class="hover:bg-surface/60">
+                <td class="px-5 py-3.5">
+                  <div class="flex items-center gap-3">
+                    <a class="ent" target="_blank" rel="noopener" href="https://unlim.ge/ru/user/44444444-4444-4444-4444-444444444444/posts" class="w-9 h-9 rounded-lg bg-danger/10 text-danger grid place-items-center font-semibold">SL</a>
+                    <div>
+                      <div class="font-medium"><a class="ent" target="_blank" rel="noopener" href="https://unlim.ge/ru/user/44444444-4444-4444-4444-444444444444/posts">Sport Line</a></div>
+                      <div class="text-xs text-ink-muted">hello@sportline.ge</div>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-5 py-3.5">56</td>
+                <td class="px-5 py-3.5">28</td>
+                <td class="px-5 py-3.5 text-right font-semibold text-danger">₾ 4 980</td>
+                <td class="px-5 py-3.5 text-right"><button data-items="SL" class="inline-flex items-center gap-1 text-brand-700 font-medium hover:underline">4 товара <i data-lucide="chevron-right" style="width:14px;height:14px"></i></button></td>
+                <td class="px-5 py-3.5 text-right"><button data-payout="SL" class="bg-brand text-white text-sm font-semibold rounded-lg px-3 py-1.5 hover:bg-brand-600">Выплатить</button></td>
+              </tr>
+              <tr class="hover:bg-surface/60">
+                <td class="px-5 py-3.5">
+                  <div class="flex items-center gap-3">
+                    <a class="ent" target="_blank" rel="noopener" href="https://unlim.ge/ru/user/55555555-5555-5555-5555-555555555555/posts" class="w-9 h-9 rounded-lg bg-brand-50 text-brand-700 grid place-items-center font-semibold">BK</a>
+                    <div>
+                      <div class="font-medium"><a class="ent" target="_blank" rel="noopener" href="https://unlim.ge/ru/user/55555555-5555-5555-5555-555555555555/posts">Book Kiosk</a></div>
+                      <div class="text-xs text-ink-muted">contact@bookkiosk.ge</div>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-5 py-3.5">312</td>
+                <td class="px-5 py-3.5">18</td>
+                <td class="px-5 py-3.5 text-right font-semibold text-ink-muted">—</td>
+                <td class="px-5 py-3.5 text-right text-ink-muted">нет</td>
+                <td class="px-5 py-3.5 text-right"><button class="text-ink-muted text-sm hover:text-ink">Профиль</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+    <!-- /SELLERS -->
+
+    <!-- ============ COURIER ============ -->
+    <section data-page="courier" class="space-y-6 hidden">
+      <div>
+        <h1 class="text-2xl font-bold">Курьерская служба</h1>
+        <p class="text-sm text-ink-muted mt-1">Переводы от курьера и сверка реестров</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="bg-white rounded-xl2 shadow-card p-5">
+          <div class="text-xs uppercase tracking-wide text-ink-muted">У курьера сейчас</div>
+          <div class="text-2xl font-bold mt-1">₾ 27 815</div>
+          <div class="text-xs text-ink-muted mt-2">36 заказов</div>
+        </div>
+        <div class="bg-white rounded-xl2 shadow-card p-5">
+          <div class="text-xs uppercase tracking-wide text-ink-muted">Комиссия курьера за месяц</div>
+          <div class="text-2xl font-bold mt-1">₾ 4 280</div>
+          <div class="text-xs text-ink-muted mt-2">~10% от оборота</div>
+        </div>
+        <div class="bg-white rounded-xl2 shadow-card p-5">
+          <div class="text-xs uppercase tracking-wide text-ink-muted">Получено за месяц</div>
+          <div class="text-2xl font-bold mt-1 text-brand">₾ 78 920</div>
+          <div class="text-xs text-ink-muted mt-2">42 перевода</div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl2 shadow-card overflow-hidden">
+        <div class="px-5 py-4 border-b border-black/5">
+          <h2 class="font-semibold">Ожидаемые поступления</h2>
+          <p class="text-xs text-ink-muted mt-0.5">Заказы, по которым курьер ещё не перевёл деньги</p>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead class="text-left text-xs uppercase tracking-wide text-ink-muted bg-surface">
+              <tr>
+                <th class="px-5 py-3 font-medium">Дата</th>
+                <th class="px-5 py-3 font-medium">Заказ</th>
+                <th class="px-5 py-3 font-medium">Продавец</th>
+                <th class="px-5 py-3 font-medium text-right">Принято курьером</th>
+                <th class="px-5 py-3 font-medium text-right">Комиссия</th>
+                <th class="px-5 py-3 font-medium text-right">К получению</th>
+                <th class="px-5 py-3"></th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-black/5">
+              <tr class="hover:bg-surface/60">
+                <td class="px-5 py-3.5">27.05</td>
+                <td class="px-5 py-3.5 text-info font-semibold">#UN-10428</td>
+                <td class="px-5 py-3.5"><a class="ent" target="_blank" rel="noopener" href="https://unlim.ge/ru/user/44444444-4444-4444-4444-444444444444/posts">Sport Line</a></td>
+                <td class="px-5 py-3.5 text-right">₾ 420,00</td>
+                <td class="px-5 py-3.5 text-right text-ink-muted">₾ 42,00</td>
+                <td class="px-5 py-3.5 text-right font-semibold">₾ 378,00</td>
+                <td class="px-5 py-3.5 text-right"><button data-order="UN-10428" class="bg-brand text-white text-sm font-semibold rounded-lg px-3 py-1.5 hover:bg-brand-600">Подтвердить</button></td>
+              </tr>
+              <tr class="hover:bg-surface/60">
+                <td class="px-5 py-3.5">27.05</td>
+                <td class="px-5 py-3.5 text-info font-semibold">#UN-10425</td>
+                <td class="px-5 py-3.5"><a class="ent" target="_blank" rel="noopener" href="https://unlim.ge/ru/user/33333333-3333-3333-3333-333333333333/posts">Home &amp; Co</a></td>
+                <td class="px-5 py-3.5 text-right">₾ 189,00</td>
+                <td class="px-5 py-3.5 text-right text-ink-muted">₾ 18,90</td>
+                <td class="px-5 py-3.5 text-right font-semibold">₾ 170,10</td>
+                <td class="px-5 py-3.5 text-right"><button data-order="UN-10425" class="bg-brand text-white text-sm font-semibold rounded-lg px-3 py-1.5 hover:bg-brand-600">Подтвердить</button></td>
+              </tr>
+              <tr class="hover:bg-surface/60">
+                <td class="px-5 py-3.5">26.05</td>
+                <td class="px-5 py-3.5 text-info font-semibold">#UN-10419</td>
+                <td class="px-5 py-3.5"><a class="ent" target="_blank" rel="noopener" href="https://unlim.ge/ru/user/11111111-1111-1111-1111-111111111111/posts">Geo Tech</a></td>
+                <td class="px-5 py-3.5 text-right">₾ 312,00</td>
+                <td class="px-5 py-3.5 text-right text-ink-muted">₾ 31,20</td>
+                <td class="px-5 py-3.5 text-right font-semibold">₾ 280,80</td>
+                <td class="px-5 py-3.5 text-right"><button data-order="UN-10419" class="bg-brand text-white text-sm font-semibold rounded-lg px-3 py-1.5 hover:bg-brand-600">Подтвердить</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+    <!-- /COURIER -->
+
+    <!-- ============ PAYOUTS ============ -->
+    <section data-page="payouts" class="space-y-6 hidden">
+      <div>
+        <h1 class="text-2xl font-bold">Выплаты продавцам</h1>
+        <p class="text-sm text-ink-muted mt-1">История переводов продавцам</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="bg-white rounded-xl2 shadow-card p-5">
+          <div class="text-xs uppercase tracking-wide text-ink-muted">К выплате</div>
+          <div class="text-2xl font-bold mt-1 text-danger">₾ 61 240</div>
+        </div>
+        <div class="bg-white rounded-xl2 shadow-card p-5">
+          <div class="text-xs uppercase tracking-wide text-ink-muted">Выплачено за месяц</div>
+          <div class="text-2xl font-bold mt-1">₾ 124 380</div>
+        </div>
+        <div class="bg-white rounded-xl2 shadow-card p-5">
+          <div class="text-xs uppercase tracking-wide text-ink-muted">Средняя выплата</div>
+          <div class="text-2xl font-bold mt-1">₾ 2 845</div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl2 shadow-card overflow-hidden">
+        <div class="px-5 py-4 border-b border-black/5">
+          <h2 class="font-semibold">История</h2>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead class="text-left text-xs uppercase tracking-wide text-ink-muted bg-surface">
+              <tr>
+                <th class="px-5 py-3 font-medium">Дата</th>
+                <th class="px-5 py-3 font-medium">Продавец</th>
+                <th class="px-5 py-3 font-medium">Заказы</th>
+                <th class="px-5 py-3 font-medium">Реквизиты</th>
+                <th class="px-5 py-3 font-medium text-right">Сумма</th>
+                <th class="px-5 py-3 font-medium">Статус</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-black/5">
+              <tr class="hover:bg-surface/60">
+                <td class="px-5 py-3.5">25.05 14:20</td>
+                <td class="px-5 py-3.5"><a class="ent" target="_blank" rel="noopener" href="https://unlim.ge/ru/user/33333333-3333-3333-3333-333333333333/posts">Home &amp; Co</a></td>
+                <td class="px-5 py-3.5">7 заказов</td>
+                <td class="px-5 py-3.5 text-ink-muted">GE29 TB****0123</td>
+                <td class="px-5 py-3.5 text-right font-semibold">₾ 3 240</td>
+                <td class="px-5 py-3.5"><span class="pill bg-brand/10 text-brand-700">Выплачено</span></td>
+              </tr>
+              <tr class="hover:bg-surface/60">
+                <td class="px-5 py-3.5">22.05 10:05</td>
+                <td class="px-5 py-3.5"><a class="ent" target="_blank" rel="noopener" href="https://unlim.ge/ru/user/11111111-1111-1111-1111-111111111111/posts">Geo Tech</a></td>
+                <td class="px-5 py-3.5">15 заказов</td>
+                <td class="px-5 py-3.5 text-ink-muted">GE12 BG****8842</td>
+                <td class="px-5 py-3.5 text-right font-semibold">₾ 18 920</td>
+                <td class="px-5 py-3.5"><span class="pill bg-brand/10 text-brand-700">Выплачено</span></td>
+              </tr>
+              <tr class="hover:bg-surface/60">
+                <td class="px-5 py-3.5">20.05 16:48</td>
+                <td class="px-5 py-3.5"><a class="ent" target="_blank" rel="noopener" href="https://unlim.ge/ru/user/44444444-4444-4444-4444-444444444444/posts">Sport Line</a></td>
+                <td class="px-5 py-3.5">6 заказов</td>
+                <td class="px-5 py-3.5 text-ink-muted">GE44 TB****5510</td>
+                <td class="px-5 py-3.5 text-right font-semibold">₾ 5 110</td>
+                <td class="px-5 py-3.5"><span class="pill bg-warn/20 text-amber-700">В обработке</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+    <!-- /PAYOUTS -->
+
+    </div>
+  </main>
+</div>
+
+<!-- ============ ORDER MODAL ============ -->
+<div id="orderModal" class="fixed inset-0 z-50 hidden">
+  <div data-modal-close class="absolute inset-0 bg-ink/40 backdrop-blur-sm"></div>
+  <div class="relative h-full w-full flex items-start justify-center p-4 md:p-10 overflow-y-auto">
+    <div class="relative bg-white rounded-xl2 shadow-pop w-full max-w-2xl">
+      <!-- header -->
+      <div class="px-6 py-5 border-b border-black/5 flex items-start gap-4">
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center gap-2.5 flex-wrap">
+            <h2 id="m-id" class="text-xl font-bold">#UN-10432</h2>
+            <span id="m-status" class="pill">—</span>
+          </div>
+          <div id="m-date" class="text-xs text-ink-muted mt-1">—</div>
+        </div>
+        <button data-modal-close class="w-9 h-9 grid place-items-center rounded-lg hover:bg-surface text-ink-muted">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+
+      <!-- participants -->
+      <div class="px-6 py-5 border-b border-black/5">
+        <div class="text-xs uppercase tracking-wide text-ink-muted mb-3">Участники</div>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <a id="m-seller" target="_blank" rel="noopener" class="block bg-surface rounded-lg p-3 hover:bg-brand-50 group">
+            <div class="flex items-center gap-1 text-xs text-ink-muted">Продавец <i data-lucide="external-link" style="width:12px;height:12px"></i></div>
+            <div class="font-semibold mt-0.5 group-hover:text-brand-700">—</div>
+          </a>
+          <a id="m-product" target="_blank" rel="noopener" class="block bg-surface rounded-lg p-3 hover:bg-brand-50 group">
+            <div class="flex items-center gap-1 text-xs text-ink-muted">Товар <i data-lucide="external-link" style="width:12px;height:12px"></i></div>
+            <div class="font-semibold mt-0.5 group-hover:text-brand-700">—</div>
+          </a>
+          <a id="m-buyer" target="_blank" rel="noopener" class="block bg-surface rounded-lg p-3 hover:bg-brand-50 group">
+            <div class="flex items-center gap-1 text-xs text-ink-muted">Покупатель <i data-lucide="external-link" style="width:12px;height:12px"></i></div>
+            <div class="font-semibold mt-0.5 group-hover:text-brand-700">—</div>
+          </a>
+        </div>
+      </div>
+
+      <!-- timeline -->
+      <div class="px-6 py-5 border-b border-black/5">
+        <div class="text-xs uppercase tracking-wide text-ink-muted mb-3">Финансовый таймлайн</div>
+        <ol id="m-timeline" class="space-y-3"></ol>
+      </div>
+
+      <!-- breakdown -->
+      <div class="px-6 py-5 border-b border-black/5">
+        <div class="text-xs uppercase tracking-wide text-ink-muted mb-3">Расчёт</div>
+        <dl class="text-sm space-y-1.5">
+          <div class="flex justify-between"><dt class="text-ink-muted">Товар</dt><dd id="m-itemPrice" class="font-medium">—</dd></div>
+          <div class="flex justify-between"><dt class="text-ink-muted">Доставка</dt><dd id="m-delivery" class="font-medium">—</dd></div>
+          <div class="flex justify-between"><dt class="text-ink-muted">Комиссия курьера</dt><dd id="m-courierFee" class="font-medium">—</dd></div>
+          <div class="flex justify-between border-t border-black/5 pt-2 mt-2">
+            <dt class="font-semibold">К выплате продавцу</dt>
+            <dd id="m-payout" class="font-bold text-base">—</dd>
+          </div>
+        </dl>
+        <p id="m-paymentNote" class="text-xs text-ink-muted mt-3">—</p>
+      </div>
+
+      <!-- activity log -->
+      <div class="px-6 py-5 border-b border-black/5">
+        <div class="text-xs uppercase tracking-wide text-ink-muted mb-3">История действий</div>
+        <ul id="m-log" class="text-sm space-y-2 text-ink-muted"></ul>
+      </div>
+
+      <!-- footer / actions -->
+      <div class="px-6 py-4 bg-surface flex items-center justify-between gap-3">
+        <button data-modal-close class="text-sm font-medium text-ink-muted hover:text-ink">Закрыть</button>
+        <div id="m-actions" class="flex gap-2"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ ITEMS PAYOUT LIST MODAL ============ -->
+<div id="itemsModal" class="fixed inset-0 z-50 hidden">
+  <div data-items-close class="absolute inset-0 bg-ink/40 backdrop-blur-sm"></div>
+  <div class="relative h-full w-full flex items-start justify-center p-4 md:p-10 overflow-y-auto">
+    <div class="relative bg-white rounded-xl2 shadow-pop w-full max-w-3xl">
+      <div class="px-6 py-5 border-b border-black/5 flex items-start gap-4">
+        <div id="i-avatar" class="w-11 h-11 rounded-lg grid place-items-center font-semibold">—</div>
+        <div class="flex-1">
+          <div class="text-xs uppercase tracking-wide text-ink-muted">Товары к выплате</div>
+          <h2 id="i-name" class="text-xl font-bold">—</h2>
+          <div id="i-summary" class="text-sm text-ink-muted mt-0.5">—</div>
+        </div>
+        <button data-items-close class="w-9 h-9 grid place-items-center rounded-lg hover:bg-surface text-ink-muted"><i data-lucide="x"></i></button>
+      </div>
+
+      <div class="px-5 py-3 border-b border-black/5 bg-surface flex items-center justify-between text-sm">
+        <label class="flex items-center gap-2 cursor-pointer">
+          <input id="i-selectAll" type="checkbox" checked class="w-4 h-4 rounded text-brand focus:ring-brand">
+          <span class="text-ink-muted">Выбрать все</span>
+        </label>
+        <span class="text-xs text-ink-muted">Снимите галочку, чтобы исключить товар из выплаты</span>
+      </div>
+
+      <div class="max-h-[55vh] overflow-y-auto">
+        <table class="w-full text-sm">
+          <thead class="text-left text-xs uppercase tracking-wide text-ink-muted bg-white sticky top-0 z-10">
+            <tr class="border-b border-black/5">
+              <th class="px-5 py-3 font-medium w-10"></th>
+              <th class="px-5 py-3 font-medium">Заказ</th>
+              <th class="px-5 py-3 font-medium">Товар</th>
+              <th class="px-5 py-3 font-medium">Покупатель</th>
+              <th class="px-5 py-3 font-medium">Дата</th>
+              <th class="px-5 py-3 font-medium text-right">Сумма</th>
+            </tr>
+          </thead>
+          <tbody id="i-rows" class="divide-y divide-black/5"></tbody>
+        </table>
+      </div>
+
+      <div class="px-6 py-4 bg-surface flex items-center justify-between gap-3 rounded-b-xl2 flex-wrap">
+        <div class="text-sm">
+          <span class="text-ink-muted">Выбрано:</span>
+          <span id="i-selectedCount" class="font-semibold ml-1">—</span>
+          <span class="text-ink-muted">·</span>
+          <span id="i-selectedTotal" class="font-bold text-base ml-1">—</span>
+        </div>
+        <div class="flex gap-2">
+          <button data-items-close class="text-sm font-medium text-ink-muted hover:text-ink px-3 py-2">Закрыть</button>
+          <button id="i-payBtn" class="inline-flex items-center gap-2 bg-brand text-white text-sm font-semibold rounded-lg px-4 py-2 hover:bg-brand-600">
+            <i data-lucide="send"></i> Выплатить выбранные
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAYOUT CONFIRM MODAL ============ -->
+<div id="payoutModal" class="fixed inset-0 z-50 hidden">
+  <div data-payout-close class="absolute inset-0 bg-ink/40 backdrop-blur-sm"></div>
+  <div class="relative h-full w-full flex items-start justify-center p-4 md:p-10">
+    <div class="relative bg-white rounded-xl2 shadow-pop w-full max-w-md mt-10">
+      <div class="px-6 py-5 border-b border-black/5 flex items-start gap-4">
+        <div class="w-10 h-10 rounded-xl bg-brand-50 text-brand grid place-items-center"><i data-lucide="send"></i></div>
+        <div class="flex-1">
+          <h2 class="text-lg font-bold">Подтвердить выплату</h2>
+          <p class="text-xs text-ink-muted mt-0.5">Продавцу будет переведена сумма по готовым к выплате товарам</p>
+        </div>
+        <button data-payout-close class="w-9 h-9 grid place-items-center rounded-lg hover:bg-surface text-ink-muted"><i data-lucide="x"></i></button>
+      </div>
+
+      <div class="px-6 py-5 space-y-4">
+        <div class="flex items-center gap-3">
+          <div id="p-avatar" class="w-11 h-11 rounded-lg grid place-items-center font-semibold">—</div>
+          <div class="min-w-0">
+            <div id="p-name" class="font-semibold">—</div>
+            <div id="p-items" class="text-xs text-ink-muted">—</div>
+          </div>
+        </div>
+
+        <dl class="bg-surface rounded-xl p-4 text-sm space-y-2">
+          <div class="flex justify-between"><dt class="text-ink-muted">Сумма к выплате</dt><dd id="p-amount" class="font-bold text-base">—</dd></div>
+          <div class="flex justify-between"><dt class="text-ink-muted">Период накопления</dt><dd id="p-period" class="font-medium">—</dd></div>
+          <div class="flex justify-between"><dt class="text-ink-muted">Реквизиты</dt><dd id="p-iban" class="font-mono text-xs">—</dd></div>
+        </dl>
+
+        <div class="flex gap-2 bg-warn/10 text-amber-800 rounded-lg p-3 text-xs">
+          <i data-lucide="alert-triangle" class="text-warn flex-none mt-0.5" style="width:16px;height:16px"></i>
+          <div>После подтверждения товары будут отмечены как выплаченные, долг закроется. Действие нельзя отменить из админки.</div>
+        </div>
+      </div>
+
+      <div class="px-6 py-4 bg-surface flex items-center justify-end gap-2 rounded-b-xl2">
+        <button data-payout-close class="text-sm font-medium text-ink-muted hover:text-ink px-3 py-2">Отмена</button>
+        <button id="p-confirmBtn" class="inline-flex items-center gap-2 bg-brand text-white text-sm font-semibold rounded-lg px-4 py-2 hover:bg-brand-600">
+          <i data-lucide="check"></i> <span>Выплатить</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  if (window.lucide) lucide.createIcons();
+
+  /* ====== SELLER ITEMS (to be paid out) ====== */
+  const sellerItems = {
+    GT: [
+      { o:'UN-10432', p:'iPhone 15, 128 ГБ', pu:'https://unlim.ge/ru/post/iphone-15-128gb-2026-05-28-14-22-01', c:'Levan G.',  cu:'https://unlim.ge/ru/user/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1/posts', d:'28.05', a:2690 },
+      { o:'UN-10419', p:'Кофемолка De\'Longhi', pu:'https://unlim.ge/ru/post/delonghi-coffee-grinder-2026-05-26-11-30-08', c:'Tamta L.', cu:'https://unlim.ge/ru/user/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa5/posts', d:'26.05', a:312 },
+      { o:'UN-10398', p:'MacBook Air M3', pu:'https://unlim.ge/ru/post/macbook-air-m3-2026-05-23-10-15-00', c:'David K.', cu:'https://unlim.ge/ru/user/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaab1/posts', d:'23.05', a:4200 },
+      { o:'UN-10395', p:'AirPods Max', pu:'https://unlim.ge/ru/post/airpods-max-2026-05-23-09-40-00', c:'Sopho V.', cu:'https://unlim.ge/ru/user/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaab2/posts', d:'23.05', a:1350 },
+      { o:'UN-10387', p:'iPad Pro 11"', pu:'https://unlim.ge/ru/post/ipad-pro-11-2026-05-22-18-22-00', c:'Tornike S.', cu:'https://unlim.ge/ru/user/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaab3/posts', d:'22.05', a:2100 },
+      { o:'UN-10380', p:'Apple Watch S9', pu:'https://unlim.ge/ru/post/apple-watch-s9-2026-05-22-12-00-00', c:'Anna G.', cu:'https://unlim.ge/ru/user/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaab4/posts', d:'22.05', a:980 },
+      { o:'UN-10371', p:'Logitech MX Master 3S', pu:'https://unlim.ge/ru/post/logitech-mx-master-2026-05-21-15-30-00', c:'Mariam Z.', cu:'https://unlim.ge/ru/user/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaab5/posts', d:'21.05', a:280 },
+      { o:'UN-10368', p:'Bose QC Ultra', pu:'https://unlim.ge/ru/post/bose-qc-ultra-2026-05-21-13-10-00', c:'Giorgi T.', cu:'https://unlim.ge/ru/user/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaab6/posts', d:'21.05', a:1250 },
+      { o:'UN-10363', p:'Dyson V12', pu:'https://unlim.ge/ru/post/dyson-v12-2026-05-21-11-00-00', c:'Nino L.', cu:'https://unlim.ge/ru/user/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaab7/posts', d:'21.05', a:1050 },
+      { o:'UN-10358', p:'Контроллер PS5 DualSense', pu:'https://unlim.ge/ru/post/ps5-controller-2026-05-21-09-50-00', c:'Tamaz M.', cu:'https://unlim.ge/ru/user/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaab8/posts', d:'21.05', a:308 },
+      { o:'UN-10355', p:'AirTag (упаковка 4 шт.)', pu:'https://unlim.ge/ru/post/airtag-4-pack-2026-05-21-09-20-00', c:'Salome P.', cu:'https://unlim.ge/ru/user/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaab9/posts', d:'21.05', a:300 },
+      { o:'UN-10350', p:'Чехол MagSafe Leather', pu:'https://unlim.ge/ru/post/magsafe-leather-case-2026-05-21-08-10-00', c:'Beso K.', cu:'https://unlim.ge/ru/user/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaac1/posts', d:'21.05', a:0 },
+    ],
+    TS: [
+      { o:'UN-10431', p:'AirPods Pro 2', pu:'https://unlim.ge/ru/post/airpods-pro-2-2026-05-28-12-08-15', c:'Mariam B.', cu:'https://unlim.ge/ru/user/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa2/posts', d:'28.05', a:749 },
+      { o:'UN-10402', p:'iPhone 14', pu:'https://unlim.ge/ru/post/iphone-14-2026-05-24-12-00-00', c:'Lika P.', cu:'https://unlim.ge/ru/user/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaad1/posts', d:'24.05', a:2100 },
+      { o:'UN-10396', p:'Samsung TV 55"', pu:'https://unlim.ge/ru/post/samsung-tv-55-2026-05-23-14-30-00', c:'Vakho M.', cu:'https://unlim.ge/ru/user/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaad2/posts', d:'23.05', a:2380 },
+      { o:'UN-10391', p:'Sony WH-1000XM5', pu:'https://unlim.ge/ru/post/sony-wh-1000xm5-2026-05-22-19-15-00', c:'Maia K.', cu:'https://unlim.ge/ru/user/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaad3/posts', d:'22.05', a:980 },
+      { o:'UN-10385', p:'Sonos Beam Gen 2', pu:'https://unlim.ge/ru/post/sonos-beam-2026-05-22-15-40-00', c:'Nika S.', cu:'https://unlim.ge/ru/user/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaad4/posts', d:'22.05', a:1250 },
+      { o:'UN-10379', p:'Galaxy Buds 2 Pro', pu:'https://unlim.ge/ru/post/galaxy-buds-2-2026-05-22-11-10-00', c:'Gio A.', cu:'https://unlim.ge/ru/user/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaad5/posts', d:'22.05', a:480 },
+      { o:'UN-10372', p:'Pixel 8', pu:'https://unlim.ge/ru/post/pixel-8-2026-05-21-17-00-00', c:'Tata D.', cu:'https://unlim.ge/ru/user/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaad6/posts', d:'21.05', a:1320 },
+      { o:'UN-10369', p:'Wacom Intuos S', pu:'https://unlim.ge/ru/post/wacom-intuos-s-2026-05-21-14-25-00', c:'Saba L.', cu:'https://unlim.ge/ru/user/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaad7/posts', d:'21.05', a:211 },
+    ],
+    HC: [
+      { o:'UN-10425', p:'Чайник Bosch TWK', pu:'https://unlim.ge/ru/post/bosch-twk-kettle-2026-05-27-09-14-22', c:'Nika A.', cu:'https://unlim.ge/ru/user/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa4/posts', d:'27.05', a:189 },
+      { o:'UN-10410', p:'Тостер Tefal', pu:'https://unlim.ge/ru/post/tefal-toaster-2026-05-25-09-30-44', c:'Beka T.', cu:'https://unlim.ge/ru/user/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa6/posts', d:'25.05', a:145 },
+      { o:'UN-10405', p:'Пылесос Bosch BGS-7', pu:'https://unlim.ge/ru/post/bosch-bgs7-2026-05-24-16-20-00', c:'Ana M.', cu:'https://unlim.ge/ru/user/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaae1/posts', d:'24.05', a:1980 },
+      { o:'UN-10399', p:'Холодильник Beko RCSA 366', pu:'https://unlim.ge/ru/post/beko-rcsa-366-2026-05-23-15-10-00', c:'Giga L.', cu:'https://unlim.ge/ru/user/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaae2/posts', d:'23.05', a:2850 },
+      { o:'UN-10394', p:'Стиральная машина LG F4', pu:'https://unlim.ge/ru/post/lg-f4-washer-2026-05-23-11-40-00', c:'Sopho T.', cu:'https://unlim.ge/ru/user/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaae3/posts', d:'23.05', a:1046 },
+    ],
+    SL: [
+      { o:'UN-10428', p:'Кроссовки Nike Pegasus', pu:'https://unlim.ge/ru/post/nike-pegasus-2026-05-27-18-41-03', c:'Giorgi M.', cu:'https://unlim.ge/ru/user/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa3/posts', d:'27.05', a:420 },
+      { o:'UN-10403', p:'Кроссовки Adidas Ultraboost', pu:'https://unlim.ge/ru/post/adidas-ultraboost-2026-05-24-14-30-00', c:'Davit V.', cu:'https://unlim.ge/ru/user/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaf1/posts', d:'24.05', a:580 },
+      { o:'UN-10397', p:'Велосипед Trek FX 3', pu:'https://unlim.ge/ru/post/trek-fx3-2026-05-23-13-20-00', c:'Beka R.', cu:'https://unlim.ge/ru/user/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaf2/posts', d:'23.05', a:2380 },
+      { o:'UN-10389', p:'Беговая дорожка Decathlon T520', pu:'https://unlim.ge/ru/post/decathlon-t520-2026-05-22-17-00-00', c:'Mari L.', cu:'https://unlim.ge/ru/user/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaf3/posts', d:'22.05', a:1600 },
+    ],
+  };
+
+  const fmtGEL = n => '₾ ' + n.toLocaleString('ru-RU') + (n % 1 === 0 ? ',00' : '');
+
+  const itemsModal = document.getElementById('itemsModal');
+  let currentItemsKey = null;
+
+  function renderItems() {
+    const list = sellerItems[currentItemsKey] || [];
+    const rows = list.map((it, idx) => `
+      <tr class="hover:bg-surface/60">
+        <td class="px-5 py-3 align-top"><input type="checkbox" data-item="${idx}" checked class="w-4 h-4 rounded text-brand focus:ring-brand mt-0.5"></td>
+        <td class="px-5 py-3 align-top text-info font-semibold"><button data-order="${it.o}" class="hover:underline">#${it.o}</button></td>
+        <td class="px-5 py-3 align-top"><a class="ent" target="_blank" rel="noopener" href="${it.pu}">${it.p}</a></td>
+        <td class="px-5 py-3 align-top"><a class="ent" target="_blank" rel="noopener" href="${it.cu}">${it.c}</a></td>
+        <td class="px-5 py-3 align-top text-ink-muted">${it.d}</td>
+        <td class="px-5 py-3 align-top text-right font-semibold">${fmtGEL(it.a)}</td>
+      </tr>`).join('');
+    document.getElementById('i-rows').innerHTML = rows;
+    updateItemsTotals();
+    if (window.lucide) lucide.createIcons();
+  }
+  function updateItemsTotals() {
+    const list = sellerItems[currentItemsKey] || [];
+    const checks = itemsModal.querySelectorAll('[data-item]');
+    let count = 0, total = 0;
+    checks.forEach(ch => {
+      if (ch.checked) { count++; total += list[+ch.dataset.item].a; }
+    });
+    document.getElementById('i-selectedCount').textContent = count + ' из ' + list.length;
+    document.getElementById('i-selectedTotal').textContent = fmtGEL(total);
+    document.getElementById('i-selectAll').checked = count === list.length;
+    document.getElementById('i-selectAll').indeterminate = count > 0 && count < list.length;
+  }
+
+  function openItems(key) {
+    const s = sellers[key];
+    const list = sellerItems[key];
+    if (!s || !list) return;
+    currentItemsKey = key;
+    const av = document.getElementById('i-avatar');
+    av.textContent = s.abbr;
+    av.className = 'w-11 h-11 rounded-lg grid place-items-center font-semibold ' + s.avatarCls;
+    document.getElementById('i-name').textContent = s.name;
+    document.getElementById('i-summary').textContent = list.length + ' товаров · итого ' + s.amount;
+    renderItems();
+    itemsModal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeItems() {
+    itemsModal.classList.add('hidden');
+    document.body.style.overflow = '';
+  }
+  itemsModal.addEventListener('click', e => {
+    if (e.target.closest('[data-items-close]')) { closeItems(); return; }
+    if (e.target.id === 'i-selectAll') {
+      const v = e.target.checked;
+      itemsModal.querySelectorAll('[data-item]').forEach(c => c.checked = v);
+      updateItemsTotals();
+      return;
+    }
+    if (e.target.matches('[data-item]')) updateItemsTotals();
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && !itemsModal.classList.contains('hidden')) closeItems();
+  });
+  document.addEventListener('click', e => {
+    const t = e.target.closest('[data-items]');
+    if (!t) return;
+    e.preventDefault();
+    e.stopPropagation();
+    openItems(t.dataset.items);
+  });
+  // chain "Выплатить выбранные" → existing payout confirm modal
+  document.getElementById('i-payBtn').addEventListener('click', () => {
+    const key = currentItemsKey;
+    closeItems();
+    setTimeout(() => openPayout(key), 80);
+  });
+
+  /* ====== SELLER PAYOUT DATA ====== */
+  const sellers = {
+    GT: { name:'Geo Tech',   abbr:'GT', avatarCls:'bg-brand-50 text-brand-700',  items:12, amount:'₾ 14 820,00', period:'с 21.05.2026', iban:'GE12 BG**** 8842' },
+    TS: { name:'Tech Store', abbr:'TS', avatarCls:'bg-cyan/30 text-info',         items:8,  amount:'₾ 9 470,00',  period:'с 22.05.2026', iban:'GE40 TB**** 1109' },
+    HC: { name:'Home & Co',  abbr:'HC', avatarCls:'bg-warn/20 text-amber-700',    items:5,  amount:'₾ 6 210,00',  period:'с 23.05.2026', iban:'GE29 TB**** 0123' },
+    SL: { name:'Sport Line', abbr:'SL', avatarCls:'bg-danger/10 text-danger',     items:4,  amount:'₾ 4 980,00',  period:'с 24.05.2026', iban:'GE44 TB**** 5510' },
+  };
+
+  const payoutModal = document.getElementById('payoutModal');
+
+  function openPayout(key) {
+    const s = sellers[key];
+    if (!s) return;
+    const avatar = document.getElementById('p-avatar');
+    avatar.textContent = s.abbr;
+    avatar.className = 'w-11 h-11 rounded-lg grid place-items-center font-semibold ' + s.avatarCls;
+    document.getElementById('p-name').textContent = s.name;
+    document.getElementById('p-items').textContent = s.items + ' товаров готовы к выплате';
+    document.getElementById('p-amount').textContent = s.amount;
+    document.getElementById('p-period').textContent = s.period;
+    document.getElementById('p-iban').textContent = s.iban;
+    document.getElementById('p-confirmBtn').querySelector('span').textContent = 'Выплатить ' + s.amount;
+    payoutModal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+    if (window.lucide) lucide.createIcons();
+  }
+  function closePayout() {
+    payoutModal.classList.add('hidden');
+    document.body.style.overflow = '';
+  }
+  payoutModal.addEventListener('click', e => { if (e.target.closest('[data-payout-close]')) closePayout(); });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && !payoutModal.classList.contains('hidden')) closePayout();
+  });
+  document.addEventListener('click', e => {
+    const t = e.target.closest('[data-payout]');
+    if (!t) return;
+    e.preventDefault();
+    e.stopPropagation();
+    openPayout(t.dataset.payout);
+  });
+
+  /* ====== ORDER DATA ====== */
+  const U = {
+    geoTech:   'https://unlim.ge/ru/user/11111111-1111-1111-1111-111111111111/posts',
+    techStore: 'https://unlim.ge/ru/user/22222222-2222-2222-2222-222222222222/posts',
+    homeCo:    'https://unlim.ge/ru/user/33333333-3333-3333-3333-333333333333/posts',
+    sportLine: 'https://unlim.ge/ru/user/44444444-4444-4444-4444-444444444444/posts',
+    levan:  'https://unlim.ge/ru/user/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1/posts',
+    mariam: 'https://unlim.ge/ru/user/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa2/posts',
+    giorgi: 'https://unlim.ge/ru/user/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa3/posts',
+    nika:   'https://unlim.ge/ru/user/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa4/posts',
+    tamta:  'https://unlim.ge/ru/user/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa5/posts',
+    beka:   'https://unlim.ge/ru/user/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa6/posts',
+    saba:   'https://unlim.ge/ru/user/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa7/posts',
+  };
+  const orders = {
+    'UN-10432': {
+      date: '28.05.2026 · 14:22',
+      status: ['К выплате', 'bg-brand-50 text-brand-700'],
+      seller: ['Geo Tech', U.geoTech],
+      product: ['iPhone 15, 128 ГБ', 'https://unlim.ge/ru/post/iphone-15-128gb-2026-05-28-14-22-01'],
+      buyer: ['Levan G.', U.levan],
+      itemPrice: '₾ 2 690,00', delivery: '₾ 9,00', courierFee: '—', payout: '₾ 2 690,00',
+      paymentNote: 'Покупатель оплатил товар онлайн картой. Деньги пришли сразу на наш счёт — курьер их не держал.',
+      timeline: [
+        { s:'done', t:'28.05 14:22', label:'Оплата доставки получена', sub:'Картой онлайн → наш счёт', amt:'+₾ 9,00' },
+        { s:'done', t:'28.05 14:22', label:'Оплата товара получена',   sub:'Картой онлайн → наш счёт', amt:'+₾ 2 690,00' },
+        { s:'done', t:'28.05 14:25', label:'Деньги на нашем счету',    sub:'Баланс заказа', amt:'₾ 2 699,00' },
+        { s:'pending', t:'',         label:'Выплата продавцу',          sub:'Ожидает действия бухгалтера', amt:'–₾ 2 690,00' },
+      ],
+      log: [
+        '28.05 14:22 — заказ создан',
+        '28.05 14:25 — платёж подтверждён банком',
+      ],
+      action: 'payout',
+    },
+    'UN-10431': {
+      date: '28.05.2026 · 12:08',
+      status: ['У курьера', 'bg-warn/20 text-amber-700'],
+      seller: ['Tech Store', U.techStore],
+      product: ['AirPods Pro 2', 'https://unlim.ge/ru/post/airpods-pro-2-2026-05-28-12-08-15'],
+      buyer: ['Mariam B.', U.mariam],
+      itemPrice: '₾ 749,00', delivery: '₾ 8,00', courierFee: '₾ 74,90', payout: '₾ 749,00',
+      paymentNote: 'Оплата наличными при получении. Деньги у курьерской службы, ожидаем перевод (10% удержит курьер).',
+      timeline: [
+        { s:'done',    t:'28.05 12:08', label:'Оплата доставки получена', sub:'Картой онлайн → наш счёт', amt:'+₾ 8,00' },
+        { s:'active',  t:'28.05 16:40', label:'Оплата наличными курьеру', sub:'Сумма в кассе курьерской службы', amt:'₾ 749,00' },
+        { s:'pending', t:'',            label:'Перевод от курьера',        sub:'Ожидаем перевод за вычетом комиссии', amt:'+₾ 674,10' },
+        { s:'pending', t:'',            label:'Выплата продавцу',          sub:'', amt:'–₾ 749,00' },
+      ],
+      log: [
+        '28.05 12:08 — заказ создан',
+        '28.05 13:14 — товар передан курьеру',
+        '28.05 16:40 — курьер отметил доставку, принял наличные',
+      ],
+      action: 'none',
+    },
+    'UN-10428': {
+      date: '27.05.2026 · 18:41',
+      status: ['К подтверждению', 'bg-info/10 text-info'],
+      seller: ['Sport Line', U.sportLine],
+      product: ['Кроссовки Nike Pegasus', 'https://unlim.ge/ru/post/nike-pegasus-2026-05-27-18-41-03'],
+      buyer: ['Giorgi M.', U.giorgi],
+      itemPrice: '₾ 420,00', delivery: '₾ 7,00', courierFee: '₾ 42,00', payout: '₾ 420,00',
+      paymentNote: 'Курьер прислал реестр с переводом. Подтвердите фактическое поступление на счёт.',
+      timeline: [
+        { s:'done',   t:'27.05 18:41', label:'Оплата доставки получена',  sub:'Картой онлайн → наш счёт', amt:'+₾ 7,00' },
+        { s:'done',   t:'27.05 22:10', label:'Оплата наличными курьеру',   sub:'Принято курьером', amt:'₾ 420,00' },
+        { s:'active', t:'28.05 09:30', label:'Курьер перевёл деньги',      sub:'Ожидает подтверждения от бухгалтера', amt:'+₾ 378,00' },
+        { s:'pending',t:'',            label:'Выплата продавцу',           sub:'', amt:'–₾ 420,00' },
+      ],
+      log: [
+        '27.05 18:41 — заказ создан',
+        '27.05 19:25 — товар передан курьеру',
+        '27.05 22:10 — доставлен, принята оплата',
+        '28.05 09:30 — реестр от курьерской службы (#REG-552)',
+      ],
+      action: 'confirm',
+    },
+    'UN-10425': {
+      date: '27.05.2026 · 09:14',
+      status: ['У курьера', 'bg-warn/20 text-amber-700'],
+      seller: ['Home & Co', U.homeCo],
+      product: ['Чайник Bosch TWK', 'https://unlim.ge/ru/post/bosch-twk-kettle-2026-05-27-09-14-22'],
+      buyer: ['Nika A.', U.nika],
+      itemPrice: '₾ 189,00', delivery: '₾ 5,00', courierFee: '₾ 18,90', payout: '₾ 189,00',
+      paymentNote: 'Оплата наличными при получении. Ожидаем перевод от курьерской службы.',
+      timeline: [
+        { s:'done',    t:'27.05 09:14', label:'Оплата доставки получена', sub:'Картой онлайн → наш счёт', amt:'+₾ 5,00' },
+        { s:'active',  t:'27.05 15:20', label:'Оплата наличными курьеру', sub:'', amt:'₾ 189,00' },
+        { s:'pending', t:'',            label:'Перевод от курьера',        sub:'', amt:'+₾ 170,10' },
+        { s:'pending', t:'',            label:'Выплата продавцу',          sub:'', amt:'–₾ 189,00' },
+      ],
+      log: [
+        '27.05 09:14 — заказ создан',
+        '27.05 11:00 — передан курьеру',
+        '27.05 15:20 — доставлен, оплата наличными',
+      ],
+      action: 'none',
+    },
+    'UN-10419': {
+      date: '26.05.2026 · 11:30',
+      status: ['К подтверждению', 'bg-info/10 text-info'],
+      seller: ['Geo Tech', U.geoTech],
+      product: ['Кофемолка De\'Longhi', 'https://unlim.ge/ru/post/delonghi-coffee-grinder-2026-05-26-11-30-08'],
+      buyer: ['Tamta L.', U.tamta],
+      itemPrice: '₾ 312,00', delivery: '₾ 6,00', courierFee: '₾ 31,20', payout: '₾ 312,00',
+      paymentNote: 'Курьер прислал реестр с переводом. Подтвердите получение на счёт.',
+      timeline: [
+        { s:'done',   t:'26.05 11:30', label:'Оплата доставки получена', sub:'Картой онлайн → наш счёт', amt:'+₾ 6,00' },
+        { s:'done',   t:'26.05 17:05', label:'Оплата наличными курьеру', sub:'', amt:'₾ 312,00' },
+        { s:'active', t:'27.05 10:15', label:'Курьер перевёл деньги',     sub:'Ожидает подтверждения', amt:'+₾ 280,80' },
+        { s:'pending',t:'',            label:'Выплата продавцу',          sub:'', amt:'–₾ 312,00' },
+      ],
+      log: [
+        '26.05 11:30 — заказ создан',
+        '26.05 17:05 — доставлен, оплата наличными',
+        '27.05 10:15 — реестр от курьерской службы (#REG-549)',
+      ],
+      action: 'confirm',
+    },
+    'UN-10410': {
+      date: '25.05.2026 · 09:30',
+      status: ['Закрыт', 'bg-brand/10 text-brand-700'],
+      seller: ['Home & Co', U.homeCo],
+      product: ['Тостер Tefal', 'https://unlim.ge/ru/post/tefal-toaster-2026-05-25-09-30-44'],
+      buyer: ['Beka T.', U.beka],
+      itemPrice: '₾ 145,00', delivery: '₾ 5,00', courierFee: '—', payout: '₾ 145,00',
+      paymentNote: 'Все расчёты завершены. Заказ закрыт.',
+      timeline: [
+        { s:'done', t:'25.05 09:30', label:'Оплата доставки получена', sub:'', amt:'+₾ 5,00' },
+        { s:'done', t:'25.05 09:30', label:'Оплата товара получена',   sub:'Онлайн', amt:'+₾ 145,00' },
+        { s:'done', t:'25.05 14:00', label:'Деньги на нашем счету',    sub:'', amt:'₾ 150,00' },
+        { s:'done', t:'25.05 16:20', label:'Выплачено продавцу',       sub:'Платёж #PAY-220', amt:'–₾ 145,00' },
+      ],
+      log: [
+        '25.05 09:30 — заказ создан',
+        '25.05 13:45 — товар доставлен',
+        '25.05 16:20 — выплата продавцу (Home & Co)',
+      ],
+      action: 'none',
+    },
+    'UN-10407': {
+      date: '24.05.2026 · 16:12',
+      status: ['Отменён', 'bg-danger/10 text-danger'],
+      seller: ['Geo Tech', U.geoTech],
+      product: ['PlayStation 5 Slim', 'https://unlim.ge/ru/post/ps5-slim-2026-05-24-16-12-09'],
+      buyer: ['Saba R.', U.saba],
+      itemPrice: '₾ 1 890,00', delivery: '₾ 10,00', courierFee: '—', payout: '—',
+      paymentNote: 'Заказ отменён покупателем. Доставка возвращена картой.',
+      timeline: [
+        { s:'cancel', t:'24.05 16:12', label:'Оплата доставки получена', sub:'', amt:'+₾ 10,00' },
+        { s:'cancel', t:'24.05 18:30', label:'Возврат доставки покупателю', sub:'На карту', amt:'–₾ 10,00' },
+      ],
+      log: [
+        '24.05 16:12 — заказ создан',
+        '24.05 18:25 — покупатель отменил заказ',
+        '24.05 18:30 — возврат доставки оформлен',
+      ],
+      action: 'none',
+    },
+  };
+
+  /* ====== MODAL OPEN/CLOSE ====== */
+  const modal = document.getElementById('orderModal');
+  const dotColor = { done:'bg-brand', active:'bg-info ring-2 ring-info/30', pending:'bg-black/15', cancel:'bg-danger' };
+  const lineColor = { done:'bg-brand', active:'bg-black/10', pending:'bg-black/10', cancel:'bg-black/10' };
+
+  function openOrder(id) {
+    const o = orders[id];
+    if (!o) return;
+    document.getElementById('m-id').textContent = '#' + id;
+    document.getElementById('m-date').textContent = o.date;
+    const st = document.getElementById('m-status');
+    st.textContent = o.status[0];
+    st.className = 'pill ' + o.status[1];
+
+    const seller = document.getElementById('m-seller');
+    seller.href = o.seller[1];
+    seller.querySelector('.font-semibold').textContent = o.seller[0];
+    const product = document.getElementById('m-product');
+    product.href = o.product[1];
+    product.querySelector('.font-semibold').textContent = o.product[0];
+    const buyer = document.getElementById('m-buyer');
+    buyer.href = o.buyer[1];
+    buyer.querySelector('.font-semibold').textContent = o.buyer[0];
+
+    document.getElementById('m-itemPrice').textContent = o.itemPrice;
+    document.getElementById('m-delivery').textContent = o.delivery;
+    document.getElementById('m-courierFee').textContent = o.courierFee;
+    document.getElementById('m-payout').textContent = o.payout;
+    document.getElementById('m-paymentNote').textContent = o.paymentNote;
+
+    // timeline
+    const tl = document.getElementById('m-timeline');
+    tl.innerHTML = o.timeline.map((step, i) => {
+      const lineCls = i < o.timeline.length - 1 ? lineColor[step.s] : '';
+      const amtCls = step.s === 'cancel' ? 'text-danger' : step.s === 'pending' ? 'text-ink-muted' : 'text-ink';
+      return `
+        <li class="flex gap-3">
+          <div class="flex flex-col items-center pt-1">
+            <div class="w-3 h-3 rounded-full ${dotColor[step.s]}"></div>
+            ${lineCls ? `<div class="w-0.5 flex-1 ${lineCls} mt-1"></div>` : ''}
+          </div>
+          <div class="flex-1 pb-3">
+            <div class="flex items-center justify-between gap-3">
+              <div class="font-medium">${step.label}</div>
+              <div class="font-semibold ${amtCls}">${step.amt}</div>
+            </div>
+            <div class="text-xs text-ink-muted mt-0.5">${step.t ? step.t + (step.sub ? ' · ' + step.sub : '') : (step.sub || '—')}</div>
+          </div>
+        </li>`;
+    }).join('');
+
+    // log
+    document.getElementById('m-log').innerHTML = o.log.map(l => `<li class="flex gap-2"><span class="text-ink-muted/60">·</span><span>${l}</span></li>`).join('');
+
+    // actions
+    const actions = document.getElementById('m-actions');
+    if (o.action === 'payout') {
+      actions.innerHTML = `<button class="bg-brand text-white text-sm font-semibold rounded-lg px-4 py-2 hover:bg-brand-600 inline-flex items-center gap-2"><i data-lucide="send"></i> Выплатить продавцу</button>`;
+    } else if (o.action === 'confirm') {
+      actions.innerHTML = `<button class="bg-brand text-white text-sm font-semibold rounded-lg px-4 py-2 hover:bg-brand-600 inline-flex items-center gap-2"><i data-lucide="check"></i> Подтвердить получение</button>`;
+    } else {
+      actions.innerHTML = '';
+    }
+
+    modal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+    if (window.lucide) lucide.createIcons();
+  }
+
+  function closeModal() {
+    modal.classList.add('hidden');
+    document.body.style.overflow = '';
+  }
+
+  modal.addEventListener('click', e => {
+    if (e.target.closest('[data-modal-close]')) closeModal();
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && !modal.classList.contains('hidden')) closeModal();
+  });
+
+  // delegate clicks on any element with data-order
+  document.addEventListener('click', e => {
+    const t = e.target.closest('[data-order]');
+    if (!t) return;
+    e.preventDefault();
+    openOrder(t.dataset.order);
+  });
+
+  const pages = document.querySelectorAll('[data-page]');
+  const navs  = document.querySelectorAll('[data-nav]');
+  const titles = {
+    dashboard: 'Unlim · Финансовый дашборд',
+    orders:    'Unlim · Заказы',
+    sellers:   'Unlim · Продавцы',
+    courier:   'Unlim · Курьерская служба',
+    payouts:   'Unlim · Выплаты',
+    reports:   'Unlim · Отчёты',
+    settings:  'Unlim · Настройки',
+  };
+
+  function showPage(name) {
+    if (!titles[name]) name = 'dashboard';
+    pages.forEach(p => p.classList.toggle('hidden', p.dataset.page !== name));
+    navs.forEach(a => {
+      const active = a.dataset.nav === name;
+      a.classList.toggle('bg-brand-50', active);
+      a.classList.toggle('text-brand-700', active);
+      a.classList.toggle('font-medium', active);
+      a.classList.toggle('text-ink', !active);
+      a.classList.toggle('hover:bg-surface', !active);
+    });
+    document.title = titles[name];
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }
+
+  navs.forEach(a => a.addEventListener('click', e => {
+    e.preventDefault();
+    const name = a.dataset.nav;
+    history.replaceState(null, '', '#' + name);
+    showPage(name);
+  }));
+
+  showPage((location.hash || '#dashboard').slice(1));
+</script>
+</body>
+</html>
