@@ -6,6 +6,9 @@
 <title>Unlim · Финансовая админка</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://unpkg.com/lucide@latest"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/l10n/ru.js"></script>
 <script>
   tailwind.config = {
     theme: {
@@ -63,6 +66,25 @@
     padding-right: 36px !important;
   }
   select::-ms-expand { display: none; }
+  /* Flatpickr theme — brand colors */
+  .flatpickr-calendar { box-shadow: 0 8px 24px rgba(45,72,97,0.12); border-radius: 14px; font-family: inherit; }
+  .flatpickr-day.selected, .flatpickr-day.startRange, .flatpickr-day.endRange,
+  .flatpickr-day.selected.inRange, .flatpickr-day.startRange.inRange, .flatpickr-day.endRange.inRange,
+  .flatpickr-day.selected:focus, .flatpickr-day.startRange:focus, .flatpickr-day.endRange:focus,
+  .flatpickr-day.selected:hover, .flatpickr-day.startRange:hover, .flatpickr-day.endRange:hover,
+  .flatpickr-day.selected.prevMonthDay, .flatpickr-day.startRange.prevMonthDay, .flatpickr-day.endRange.prevMonthDay,
+  .flatpickr-day.selected.nextMonthDay, .flatpickr-day.startRange.nextMonthDay, .flatpickr-day.endRange.nextMonthDay {
+    background: #09AD64; border-color: #09AD64; color: #fff;
+  }
+  .flatpickr-day.inRange, .flatpickr-day.inRange:hover { background: #E8F8F0; border-color: #E8F8F0; box-shadow:none; color:#2D4861; }
+  .flatpickr-day.today { border-color: #09AD64; color: #09AD64; }
+  .flatpickr-day.today:hover, .flatpickr-day.today:focus { background:#09AD64; color:#fff; }
+  .flatpickr-day:hover { background:#F0F1F5; }
+  .flatpickr-current-month .flatpickr-monthDropdown-months,
+  .flatpickr-current-month input.cur-year { font-weight:600; color:#2D4861; }
+  span.flatpickr-weekday { color:#888D97; font-weight:500; }
+  /* custom period button — active state */
+  .custom-period-btn.is-active { background:#E8F8F0; border-color:#09AD64; color:#067A48; }
 </style>
 </head>
 <body class="min-h-screen font-sans antialiased">
@@ -137,8 +159,8 @@
             <button data-period="month" class="px-3 py-1.5 rounded-md font-medium">Месяц</button>
             <button data-period="year"  class="px-3 py-1.5 rounded-md font-medium">Год</button>
           </div>
-          <button class="inline-flex items-center gap-2 bg-white border border-black/5 rounded-lg px-3 py-2 text-sm font-medium hover:bg-surface">
-            <i data-lucide="calendar"></i> Произвольный
+          <button type="button" class="custom-period-btn inline-flex items-center gap-2 bg-white border border-black/5 rounded-lg px-3 py-2 text-sm font-medium hover:bg-surface">
+            <i data-lucide="calendar"></i> <span class="cp-label">Произвольный</span>
           </button>
         </div>
       </div>
@@ -617,8 +639,8 @@
             <button data-period="month" class="px-3 py-1.5 rounded-md font-medium">Месяц</button>
             <button data-period="year"  class="px-3 py-1.5 rounded-md font-medium">Год</button>
           </div>
-          <button class="inline-flex items-center gap-2 bg-white border border-black/5 rounded-lg px-3 py-2 text-sm font-medium hover:bg-surface">
-            <i data-lucide="calendar"></i> Произвольный
+          <button type="button" class="custom-period-btn inline-flex items-center gap-2 bg-white border border-black/5 rounded-lg px-3 py-2 text-sm font-medium hover:bg-surface">
+            <i data-lucide="calendar"></i> <span class="cp-label">Произвольный</span>
           </button>
         </div>
       </div>
@@ -817,8 +839,8 @@
             <button data-period="month" class="px-3 py-1.5 rounded-md font-medium">Месяц</button>
             <button data-period="year"  class="px-3 py-1.5 rounded-md font-medium">Год</button>
           </div>
-          <button class="inline-flex items-center gap-2 bg-white border border-black/5 rounded-lg px-3 py-2 text-sm font-medium hover:bg-surface">
-            <i data-lucide="calendar"></i> Произвольный
+          <button type="button" class="custom-period-btn inline-flex items-center gap-2 bg-white border border-black/5 rounded-lg px-3 py-2 text-sm font-medium hover:bg-surface">
+            <i data-lucide="calendar"></i> <span class="cp-label">Произвольный</span>
           </button>
         </div>
       </div>
@@ -938,8 +960,8 @@
             <button data-period="month" class="px-3 py-1.5 rounded-md font-medium">Месяц</button>
             <button data-period="year"  class="px-3 py-1.5 rounded-md font-medium">Год</button>
           </div>
-          <button class="inline-flex items-center gap-2 bg-white border border-black/5 rounded-lg px-3 py-2 text-sm font-medium hover:bg-surface">
-            <i data-lucide="calendar"></i> Произвольный
+          <button type="button" class="custom-period-btn inline-flex items-center gap-2 bg-white border border-black/5 rounded-lg px-3 py-2 text-sm font-medium hover:bg-surface">
+            <i data-lucide="calendar"></i> <span class="cp-label">Произвольный</span>
           </button>
         </div>
       </div>
@@ -1029,8 +1051,8 @@
             <button data-period="month" class="px-3 py-1.5 rounded-md font-medium">Месяц</button>
             <button data-period="year"  class="px-3 py-1.5 rounded-md font-medium">Год</button>
           </div>
-          <button class="inline-flex items-center gap-2 bg-white border border-black/5 rounded-lg px-3 py-2 text-sm font-medium hover:bg-surface">
-            <i data-lucide="calendar"></i> Произвольный
+          <button type="button" class="custom-period-btn inline-flex items-center gap-2 bg-white border border-black/5 rounded-lg px-3 py-2 text-sm font-medium hover:bg-surface">
+            <i data-lucide="calendar"></i> <span class="cp-label">Произвольный</span>
           </button>
         </div>
       </div>
@@ -1814,9 +1836,47 @@
     const btn = e.target.closest('.period-switch [data-period]');
     if (!btn) return;
     applyPeriod(btn.dataset.period);
+    // reset custom range button(s) — back to "Произвольный"
+    document.querySelectorAll('.custom-period-btn').forEach(b => {
+      b.classList.remove('is-active');
+      const lbl = b.querySelector('.cp-label');
+      if (lbl) lbl.textContent = 'Произвольный';
+    });
   });
 
   applyPeriod(currentPeriod);
+
+  /* ====== CUSTOM DATE-RANGE PICKER ====== */
+  if (window.flatpickr) {
+    const fmt = d => d.toLocaleDateString('ru-RU', { day:'2-digit', month:'2-digit', year:'2-digit' });
+    document.querySelectorAll('.custom-period-btn').forEach(btn => {
+      flatpickr(btn, {
+        mode: 'range',
+        locale: 'ru',
+        dateFormat: 'd.m.Y',
+        showMonths: 2,
+        clickOpens: true,
+        positionElement: btn,
+        position: 'auto right',
+        onChange: (dates) => {
+          if (dates.length !== 2) return;
+          const label = fmt(dates[0]) + ' — ' + fmt(dates[1]);
+          // update all custom buttons label + active style
+          document.querySelectorAll('.custom-period-btn').forEach(b => {
+            const l = b.querySelector('.cp-label');
+            if (l) l.textContent = label;
+            b.classList.add('is-active');
+          });
+          // deactivate all period pills
+          document.querySelectorAll('.period-switch [data-period]').forEach(b => {
+            b.classList.remove('bg-brand', 'text-white');
+          });
+          // update period label everywhere
+          document.querySelectorAll('[data-period-label]').forEach(el => el.textContent = label);
+        },
+      });
+    });
+  }
 </script>
 </body>
 </html>
