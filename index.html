@@ -114,13 +114,26 @@
     <!-- ============ DASHBOARD ============ -->
     <section data-page="dashboard" class="space-y-6">
       <!-- Page header -->
-      <div>
-        <h1 class="text-2xl font-bold">Финансовый дашборд</h1>
-        <p class="text-sm text-ink-muted mt-1">Все денежные потоки маркетплейса в одном месте</p>
+      <div class="flex items-end justify-between gap-4 flex-wrap">
+        <div>
+          <h1 class="text-2xl font-bold">Финансовый дашборд</h1>
+          <p class="text-sm text-ink-muted mt-1">Все денежные потоки маркетплейса в одном месте</p>
+        </div>
+        <div class="flex items-center gap-2 flex-wrap">
+          <div id="periodSwitch" class="inline-flex bg-white rounded-lg p-1 shadow-card text-sm">
+            <button data-period="today"  class="px-3 py-1.5 rounded-md font-medium">Сегодня</button>
+            <button data-period="week"   class="px-3 py-1.5 rounded-md font-medium bg-brand text-white">Неделя</button>
+            <button data-period="month"  class="px-3 py-1.5 rounded-md font-medium">Месяц</button>
+            <button data-period="year"   class="px-3 py-1.5 rounded-md font-medium">Год</button>
+          </div>
+          <button class="inline-flex items-center gap-2 bg-white border border-black/5 rounded-lg px-3 py-2 text-sm font-medium hover:bg-surface">
+            <i data-lucide="calendar"></i> Произвольный
+          </button>
+        </div>
       </div>
 
       <!-- KPI cards -->
-      <section class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+      <section class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
 
         <div class="bg-white rounded-xl2 shadow-card p-5">
           <div class="flex items-start justify-between">
@@ -154,16 +167,20 @@
           </div>
           <div class="mt-3 text-xs text-ink-muted"><span class="font-semibold text-ink">14</span> продавцов · самый крупный: <span class="font-semibold text-ink">«Geo Tech»</span></div>
         </div>
+      </section>
 
+      <!-- KPI period-dependent -->
+      <section class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div class="bg-white rounded-xl2 shadow-card p-5">
           <div class="flex items-start justify-between">
             <div>
-              <div class="text-xs uppercase tracking-wide text-ink-muted">Оборот за неделю</div>
-              <div class="text-2xl font-bold mt-1">₾ 142 780</div>
+              <div class="text-xs uppercase tracking-wide text-ink-muted">Оборот <span data-period-label class="lowercase">за неделю</span></div>
+              <div class="text-2xl font-bold mt-1" data-kpi="turnover">₾ 142 780</div>
+              <div class="text-xs text-ink-muted mt-1"><span data-kpi="orders">87</span> заказов · средний чек <span data-kpi="avg">₾ 1 642</span></div>
             </div>
             <div class="w-10 h-10 rounded-xl bg-brand-50 text-brand grid place-items-center"><i data-lucide="trending-up"></i></div>
           </div>
-          <div class="mt-3 flex items-end gap-1 h-8">
+          <div class="mt-3 flex items-end gap-1 h-10">
             <div class="bar" style="height:40%"></div>
             <div class="bar" style="height:62%"></div>
             <div class="bar" style="height:48%"></div>
@@ -172,6 +189,27 @@
             <div class="bar" style="height:88%"></div>
             <div class="bar" style="height:70%"></div>
           </div>
+        </div>
+
+        <div class="bg-white rounded-xl2 shadow-card p-5">
+          <div class="flex items-start justify-between">
+            <div>
+              <div class="text-xs uppercase tracking-wide text-ink-muted">Чистая прибыль <span data-period-label class="lowercase">за неделю</span></div>
+              <div class="text-2xl font-bold mt-1 text-brand-700" data-kpi="profit">₾ 12 530</div>
+              <div class="text-xs text-ink-muted mt-1">Маржинальность <span data-kpi="margin" class="font-semibold text-ink">8,8%</span></div>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-brand-50 text-brand grid place-items-center"><i data-lucide="piggy-bank"></i></div>
+          </div>
+          <dl class="mt-4 space-y-1.5 text-sm border-t border-black/5 pt-3">
+            <div class="flex justify-between">
+              <dt class="text-ink-muted flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-brand"></span> Комиссия с продавцов (10%)</dt>
+              <dd class="font-semibold" data-kpi="profitCommission">₾ 12 100</dd>
+            </div>
+            <div class="flex justify-between">
+              <dt class="text-ink-muted flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-cyan"></span> Наценка на доставку</dt>
+              <dd class="font-semibold" data-kpi="profitDelivery">₾ 430</dd>
+            </div>
+          </dl>
         </div>
       </section>
 
@@ -1622,6 +1660,37 @@
   }));
 
   showPage((location.hash || '#dashboard').slice(1));
+
+  /* ====== DASHBOARD PERIOD SWITCH ====== */
+  const periodData = {
+    today: { label:'за сегодня', turnover:'₾ 18 520', orders:'12', avg:'₾ 1 543', profit:'₾ 1 850', margin:'10,0%', commission:'₾ 1 780', delivery:'₾ 70' },
+    week:  { label:'за неделю',  turnover:'₾ 142 780', orders:'87', avg:'₾ 1 642', profit:'₾ 12 530', margin:'8,8%', commission:'₾ 12 100', delivery:'₾ 430' },
+    month: { label:'за месяц',   turnover:'₾ 528 940', orders:'342', avg:'₾ 1 546', profit:'₾ 48 920', margin:'9,2%', commission:'₾ 47 200', delivery:'₾ 1 720' },
+    year:  { label:'за год',     turnover:'₾ 6 124 800', orders:'4 128', avg:'₾ 1 484', profit:'₾ 587 400', margin:'9,6%', commission:'₾ 566 200', delivery:'₾ 21 200' },
+  };
+  const periodSwitch = document.getElementById('periodSwitch');
+  if (periodSwitch) {
+    periodSwitch.addEventListener('click', e => {
+      const btn = e.target.closest('[data-period]');
+      if (!btn) return;
+      const key = btn.dataset.period;
+      const d = periodData[key];
+      if (!d) return;
+      periodSwitch.querySelectorAll('[data-period]').forEach(b => {
+        b.classList.remove('bg-brand', 'text-white');
+      });
+      btn.classList.add('bg-brand', 'text-white');
+      document.querySelectorAll('[data-period-label]').forEach(el => el.textContent = d.label);
+      const set = (k, v) => document.querySelectorAll('[data-kpi="' + k + '"]').forEach(el => el.textContent = v);
+      set('turnover', d.turnover);
+      set('orders', d.orders);
+      set('avg', d.avg);
+      set('profit', d.profit);
+      set('margin', d.margin);
+      set('profitCommission', d.commission);
+      set('profitDelivery', d.delivery);
+    });
+  }
 </script>
 </body>
 </html>
