@@ -693,11 +693,12 @@
       <div class="bg-white rounded-xl2 shadow-card overflow-hidden">
         <div class="flex items-center justify-between px-5 py-4 border-b border-black/5 flex-wrap gap-3">
           <div class="flex items-center gap-2 flex-wrap">
-            <button class="pill bg-brand-50 text-brand-700">Все · 128</button>
-            <button class="pill bg-surface text-ink-muted hover:bg-black/5">У курьера · 36</button>
-            <button class="pill bg-surface text-ink-muted hover:bg-black/5">К подтверждению · 12</button>
+            <button class="pill bg-brand-50 text-brand-700">Все · <span data-kpi="ordTotal">87</span></button>
+            <button class="pill bg-surface text-ink-muted hover:bg-black/5">У курьера · <span data-kpi="ordProcessing">28</span></button>
+            <button class="pill bg-surface text-ink-muted hover:bg-black/5">К подтверждению · <span data-kpi="ordPending">12</span></button>
             <button class="pill bg-surface text-ink-muted hover:bg-black/5">К выплате · 33</button>
-            <button class="pill bg-surface text-ink-muted hover:bg-black/5">Закрыто · 47</button>
+            <button class="pill bg-surface text-ink-muted hover:bg-black/5">Закрыто · <span data-kpi="ordClosed">34</span></button>
+            <button class="pill bg-danger/10 text-danger hover:bg-danger/15">Отменено · <span data-kpi="ordCancelled">5</span></button>
           </div>
           <div class="relative">
             <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 text-ink-muted"></i>
