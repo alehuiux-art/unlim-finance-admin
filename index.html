@@ -966,21 +966,76 @@
         </div>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <!-- 5 detail KPI (same as dashboard) -->
+      <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+
         <div class="bg-white rounded-xl2 shadow-card p-5">
-          <div class="text-xs uppercase tracking-wide text-ink-muted">У курьера сейчас</div>
-          <div class="text-2xl font-bold mt-1">₾ 27 815</div>
-          <div class="text-xs text-ink-muted mt-2">36 заказов</div>
+          <div class="inline-flex items-center gap-1.5 text-[11px] font-semibold text-brand tracking-wide uppercase">
+            <i data-lucide="arrow-down-left" style="width:14px;height:14px"></i> От покупателей
+          </div>
+          <div class="text-xs text-ink-muted mt-3">Сбор за доставку</div>
+          <div class="text-2xl font-bold mt-1 text-brand-700" data-kpi="buyerDelivery">₾ 630</div>
+          <div class="text-xs text-ink-muted mt-1.5">Оплата картой → нам</div>
+        </div>
+
+        <div class="bg-white rounded-xl2 shadow-card p-5">
+          <div class="inline-flex items-center gap-1.5 text-[11px] font-semibold text-brand tracking-wide uppercase">
+            <i data-lucide="arrow-down-left" style="width:14px;height:14px"></i> От покупателей
+          </div>
+          <div class="text-xs text-ink-muted mt-3">Оплата за товар</div>
+          <div class="text-2xl font-bold mt-1 text-brand-700" data-kpi="buyerGoods">₾ 142 780</div>
+          <div class="text-xs text-ink-muted mt-1.5">Онлайн и через курьера</div>
+        </div>
+
+        <div class="bg-white rounded-xl2 shadow-card p-5">
+          <div class="inline-flex items-center gap-1.5 text-[11px] font-semibold text-danger tracking-wide uppercase">
+            <i data-lucide="arrow-up-right" style="width:14px;height:14px"></i> Курьеру
+          </div>
+          <div class="text-xs text-ink-muted mt-3">За доставку</div>
+          <div class="text-2xl font-bold mt-1 text-danger" data-kpi="courierDelivery">₾ 174</div>
+          <div class="text-xs text-ink-muted mt-1.5">Фикс. ставка за заказ</div>
+        </div>
+
+        <div class="bg-white rounded-xl2 shadow-card p-5">
+          <div class="inline-flex items-center gap-1.5 text-[11px] font-semibold text-danger tracking-wide uppercase">
+            <i data-lucide="arrow-up-right" style="width:14px;height:14px"></i> Курьеру
+          </div>
+          <div class="text-xs text-ink-muted mt-3">2,5% с товара</div>
+          <div class="text-2xl font-bold mt-1 text-danger" data-kpi="courierGoodsFee">₾ 3 570</div>
+          <div class="text-xs text-ink-muted mt-1.5">Комиссия за обработку</div>
+        </div>
+
+        <div class="bg-white rounded-xl2 shadow-card p-5 ring-2 ring-brand/30">
+          <div class="inline-flex items-center gap-1.5 text-[11px] font-semibold text-brand-700 tracking-wide uppercase">
+            <i data-lucide="wallet" style="width:14px;height:14px"></i> Наш доход
+          </div>
+          <div class="text-xs text-ink-muted mt-3">2,5% с товара</div>
+          <div class="text-2xl font-bold mt-1 text-brand-700" data-kpi="ourCommission">₾ 3 570</div>
+          <div class="text-xs text-ink-muted mt-1.5">Комиссия маркетплейса</div>
+        </div>
+      </section>
+
+      <!-- State cards specific to courier page -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="bg-white rounded-xl2 shadow-card p-5">
+          <div class="flex items-start justify-between">
+            <div>
+              <div class="text-xs uppercase tracking-wide text-ink-muted">У курьера сейчас</div>
+              <div class="text-2xl font-bold mt-1">₾ 27 815</div>
+              <div class="text-xs text-ink-muted mt-2">36 заказов в пути / на доставке</div>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-cyan/30 text-info grid place-items-center"><i data-lucide="truck"></i></div>
+          </div>
         </div>
         <div class="bg-white rounded-xl2 shadow-card p-5">
-          <div class="text-xs uppercase tracking-wide text-ink-muted">Комиссия курьера <span data-period-label class="lowercase normal-case">за неделю</span></div>
-          <div class="text-2xl font-bold mt-1" data-kpi="courierGoodsFee">₾ 3 570</div>
-          <div class="text-xs text-ink-muted mt-2">2,5% от оборота товаров</div>
-        </div>
-        <div class="bg-white rounded-xl2 shadow-card p-5">
-          <div class="text-xs uppercase tracking-wide text-ink-muted">Получено <span data-period-label class="lowercase normal-case">за неделю</span></div>
-          <div class="text-2xl font-bold mt-1 text-brand" data-kpi="courierReceived">₾ 28 460</div>
-          <div class="text-xs text-ink-muted mt-2" data-kpi="courierReceivedCount">18 переводов</div>
+          <div class="flex items-start justify-between">
+            <div>
+              <div class="text-xs uppercase tracking-wide text-ink-muted">Получено от курьера <span data-period-label class="lowercase normal-case">за неделю</span></div>
+              <div class="text-2xl font-bold mt-1 text-brand" data-kpi="courierReceived">₾ 28 460</div>
+              <div class="text-xs text-ink-muted mt-2" data-kpi="courierReceivedCount">18 переводов</div>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-brand-50 text-brand grid place-items-center"><i data-lucide="check-circle-2"></i></div>
+          </div>
         </div>
       </div>
 
