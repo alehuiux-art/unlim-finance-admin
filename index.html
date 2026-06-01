@@ -120,11 +120,11 @@
           <p class="text-sm text-ink-muted mt-1">Все денежные потоки маркетплейса в одном месте</p>
         </div>
         <div class="flex items-center gap-2 flex-wrap">
-          <div id="periodSwitch" class="inline-flex bg-white rounded-lg p-1 shadow-card text-sm">
-            <button data-period="today"  class="px-3 py-1.5 rounded-md font-medium">Сегодня</button>
-            <button data-period="week"   class="px-3 py-1.5 rounded-md font-medium bg-brand text-white">Неделя</button>
-            <button data-period="month"  class="px-3 py-1.5 rounded-md font-medium">Месяц</button>
-            <button data-period="year"   class="px-3 py-1.5 rounded-md font-medium">Год</button>
+          <div class="period-switch inline-flex bg-white rounded-lg p-1 shadow-card text-sm">
+            <button data-period="today" class="px-3 py-1.5 rounded-md font-medium">Сегодня</button>
+            <button data-period="week"  class="px-3 py-1.5 rounded-md font-medium">Неделя</button>
+            <button data-period="month" class="px-3 py-1.5 rounded-md font-medium">Месяц</button>
+            <button data-period="year"  class="px-3 py-1.5 rounded-md font-medium">Год</button>
           </div>
           <button class="inline-flex items-center gap-2 bg-white border border-black/5 rounded-lg px-3 py-2 text-sm font-medium hover:bg-surface">
             <i data-lucide="calendar"></i> Произвольный
@@ -593,28 +593,27 @@
 
     <!-- ============ ORDERS ============ -->
     <section data-page="orders" class="space-y-6 hidden">
-      <div>
-        <h1 class="text-2xl font-bold">Заказы</h1>
-        <p class="text-sm text-ink-muted mt-1">Все заказы маркетплейса и их финансовый статус</p>
+      <div class="flex items-end justify-between gap-4 flex-wrap">
+        <div>
+          <h1 class="text-2xl font-bold">Заказы <span data-period-label class="text-base font-medium text-ink-muted lowercase">за неделю</span></h1>
+          <p class="text-sm text-ink-muted mt-1">Все заказы маркетплейса и их финансовый статус</p>
+        </div>
+        <div class="flex items-center gap-2 flex-wrap">
+          <div class="period-switch inline-flex bg-white rounded-lg p-1 shadow-card text-sm">
+            <button data-period="today" class="px-3 py-1.5 rounded-md font-medium">Сегодня</button>
+            <button data-period="week"  class="px-3 py-1.5 rounded-md font-medium">Неделя</button>
+            <button data-period="month" class="px-3 py-1.5 rounded-md font-medium">Месяц</button>
+            <button data-period="year"  class="px-3 py-1.5 rounded-md font-medium">Год</button>
+          </div>
+          <button class="inline-flex items-center gap-2 bg-white border border-black/5 rounded-lg px-3 py-2 text-sm font-medium hover:bg-surface">
+            <i data-lucide="calendar"></i> Произвольный
+          </button>
+        </div>
       </div>
 
       <!-- FILTER PANEL -->
       <div class="bg-white rounded-xl2 shadow-card p-4">
-        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-3">
-          <div>
-            <label class="block text-xs font-medium text-ink-muted mb-1">Период с</label>
-            <div class="relative">
-              <i data-lucide="calendar" class="absolute left-3 top-1/2 -translate-y-1/2 text-ink-muted" style="width:16px;height:16px"></i>
-              <input type="date" value="2026-05-01" class="w-full bg-surface rounded-lg pl-9 pr-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand/30" />
-            </div>
-          </div>
-          <div>
-            <label class="block text-xs font-medium text-ink-muted mb-1">Период по</label>
-            <div class="relative">
-              <i data-lucide="calendar" class="absolute left-3 top-1/2 -translate-y-1/2 text-ink-muted" style="width:16px;height:16px"></i>
-              <input type="date" value="2026-05-28" class="w-full bg-surface rounded-lg pl-9 pr-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand/30" />
-            </div>
-          </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
           <div>
             <label class="block text-xs font-medium text-ink-muted mb-1">Продавец</label>
             <select class="w-full bg-surface rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand/30">
@@ -644,11 +643,8 @@
         </div>
 
         <div class="flex items-center justify-between mt-4 pt-4 border-t border-black/5">
-          <div class="flex items-center gap-3 text-xs text-ink-muted flex-wrap">
-            <span class="pill bg-brand-50 text-brand-700 inline-flex items-center gap-1.5">
-              За май 2026 <button class="hover:text-brand-600"><i data-lucide="x" style="width:12px;height:12px"></i></button>
-            </span>
-            <span>Найдено: <span class="font-semibold text-ink">7</span> из 128</span>
+          <div class="text-xs text-ink-muted">
+            Найдено: <span class="font-semibold text-ink" data-kpi="ordTotal">87</span> заказов
           </div>
           <div class="flex gap-2">
             <button class="text-sm font-medium text-ink-muted hover:text-ink px-3 py-2">Сбросить</button>
@@ -662,19 +658,19 @@
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div class="bg-white rounded-xl2 shadow-card p-4">
           <div class="text-xs uppercase tracking-wide text-ink-muted">Всего заказов</div>
-          <div class="text-xl font-bold mt-1">128</div>
+          <div class="text-xl font-bold mt-1" data-kpi="ordTotal">87</div>
         </div>
         <div class="bg-white rounded-xl2 shadow-card p-4">
           <div class="text-xs uppercase tracking-wide text-ink-muted">В обработке</div>
-          <div class="text-xl font-bold mt-1 text-warn">42</div>
+          <div class="text-xl font-bold mt-1 text-warn" data-kpi="ordProcessing">28</div>
         </div>
         <div class="bg-white rounded-xl2 shadow-card p-4">
           <div class="text-xs uppercase tracking-wide text-ink-muted">Ждут подтверждения</div>
-          <div class="text-xl font-bold mt-1 text-info">36</div>
+          <div class="text-xl font-bold mt-1 text-info" data-kpi="ordPending">12</div>
         </div>
         <div class="bg-white rounded-xl2 shadow-card p-4">
           <div class="text-xs uppercase tracking-wide text-ink-muted">Закрыто</div>
-          <div class="text-xl font-bold mt-1 text-brand">47</div>
+          <div class="text-xl font-bold mt-1 text-brand" data-kpi="ordClosed">34</div>
         </div>
       </div>
 
@@ -775,7 +771,7 @@
         </div>
 
         <div class="px-5 py-3 border-t border-black/5 bg-surface flex items-center justify-between text-sm">
-          <span class="text-ink-muted">Показано 7 из 128</span>
+          <span class="text-ink-muted">Показано 7 из <span data-kpi="ordTotal">87</span></span>
           <div class="flex items-center gap-1">
             <button class="w-8 h-8 grid place-items-center rounded-lg hover:bg-black/5"><i data-lucide="chevron-left"></i></button>
             <button class="w-8 h-8 rounded-lg bg-brand text-white font-semibold">1</button>
@@ -792,9 +788,22 @@
 
     <!-- ============ SELLERS ============ -->
     <section data-page="sellers" class="space-y-6 hidden">
-      <div>
-        <h1 class="text-2xl font-bold">Продавцы</h1>
-        <p class="text-sm text-ink-muted mt-1">Долги маркетплейса перед продавцами по товарам</p>
+      <div class="flex items-end justify-between gap-4 flex-wrap">
+        <div>
+          <h1 class="text-2xl font-bold">Продавцы</h1>
+          <p class="text-sm text-ink-muted mt-1">Долги маркетплейса перед продавцами по товарам</p>
+        </div>
+        <div class="flex items-center gap-2 flex-wrap">
+          <div class="period-switch inline-flex bg-white rounded-lg p-1 shadow-card text-sm">
+            <button data-period="today" class="px-3 py-1.5 rounded-md font-medium">Сегодня</button>
+            <button data-period="week"  class="px-3 py-1.5 rounded-md font-medium">Неделя</button>
+            <button data-period="month" class="px-3 py-1.5 rounded-md font-medium">Месяц</button>
+            <button data-period="year"  class="px-3 py-1.5 rounded-md font-medium">Год</button>
+          </div>
+          <button class="inline-flex items-center gap-2 bg-white border border-black/5 rounded-lg px-3 py-2 text-sm font-medium hover:bg-surface">
+            <i data-lucide="calendar"></i> Произвольный
+          </button>
+        </div>
       </div>
 
       <div class="bg-white rounded-xl2 shadow-card overflow-hidden">
@@ -804,7 +813,7 @@
               <tr>
                 <th class="px-5 py-3 font-medium">Продавец</th>
                 <th class="px-5 py-3 font-medium">Активных товаров</th>
-                <th class="px-5 py-3 font-medium">Продаж за месяц</th>
+                <th class="px-5 py-3 font-medium" data-kpi="sellerSalesLabel">Продаж за неделю</th>
                 <th class="px-5 py-3 font-medium text-right">Долг</th>
                 <th class="px-5 py-3 font-medium text-right">Готовы к выплате</th>
                 <th class="px-5 py-3"></th>
@@ -900,9 +909,22 @@
 
     <!-- ============ COURIER ============ -->
     <section data-page="courier" class="space-y-6 hidden">
-      <div>
-        <h1 class="text-2xl font-bold">Курьерская служба</h1>
-        <p class="text-sm text-ink-muted mt-1">Переводы от курьера и сверка реестров</p>
+      <div class="flex items-end justify-between gap-4 flex-wrap">
+        <div>
+          <h1 class="text-2xl font-bold">Курьерская служба</h1>
+          <p class="text-sm text-ink-muted mt-1">Переводы от курьера и сверка реестров</p>
+        </div>
+        <div class="flex items-center gap-2 flex-wrap">
+          <div class="period-switch inline-flex bg-white rounded-lg p-1 shadow-card text-sm">
+            <button data-period="today" class="px-3 py-1.5 rounded-md font-medium">Сегодня</button>
+            <button data-period="week"  class="px-3 py-1.5 rounded-md font-medium">Неделя</button>
+            <button data-period="month" class="px-3 py-1.5 rounded-md font-medium">Месяц</button>
+            <button data-period="year"  class="px-3 py-1.5 rounded-md font-medium">Год</button>
+          </div>
+          <button class="inline-flex items-center gap-2 bg-white border border-black/5 rounded-lg px-3 py-2 text-sm font-medium hover:bg-surface">
+            <i data-lucide="calendar"></i> Произвольный
+          </button>
+        </div>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -912,14 +934,14 @@
           <div class="text-xs text-ink-muted mt-2">36 заказов</div>
         </div>
         <div class="bg-white rounded-xl2 shadow-card p-5">
-          <div class="text-xs uppercase tracking-wide text-ink-muted">Комиссия курьера за месяц</div>
-          <div class="text-2xl font-bold mt-1">₾ 4 280</div>
+          <div class="text-xs uppercase tracking-wide text-ink-muted">Комиссия курьера <span data-period-label class="lowercase normal-case">за неделю</span></div>
+          <div class="text-2xl font-bold mt-1" data-kpi="courierCommission">₾ 1 245</div>
           <div class="text-xs text-ink-muted mt-2">~10% от оборота</div>
         </div>
         <div class="bg-white rounded-xl2 shadow-card p-5">
-          <div class="text-xs uppercase tracking-wide text-ink-muted">Получено за месяц</div>
-          <div class="text-2xl font-bold mt-1 text-brand">₾ 78 920</div>
-          <div class="text-xs text-ink-muted mt-2">42 перевода</div>
+          <div class="text-xs uppercase tracking-wide text-ink-muted">Получено <span data-period-label class="lowercase normal-case">за неделю</span></div>
+          <div class="text-2xl font-bold mt-1 text-brand" data-kpi="courierReceived">₾ 28 460</div>
+          <div class="text-xs text-ink-muted mt-2" data-kpi="courierReceivedCount">18 переводов</div>
         </div>
       </div>
 
@@ -978,9 +1000,22 @@
 
     <!-- ============ PAYOUTS ============ -->
     <section data-page="payouts" class="space-y-6 hidden">
-      <div>
-        <h1 class="text-2xl font-bold">Выплаты продавцам</h1>
-        <p class="text-sm text-ink-muted mt-1">История переводов продавцам</p>
+      <div class="flex items-end justify-between gap-4 flex-wrap">
+        <div>
+          <h1 class="text-2xl font-bold">Выплаты продавцам</h1>
+          <p class="text-sm text-ink-muted mt-1">История переводов продавцам</p>
+        </div>
+        <div class="flex items-center gap-2 flex-wrap">
+          <div class="period-switch inline-flex bg-white rounded-lg p-1 shadow-card text-sm">
+            <button data-period="today" class="px-3 py-1.5 rounded-md font-medium">Сегодня</button>
+            <button data-period="week"  class="px-3 py-1.5 rounded-md font-medium">Неделя</button>
+            <button data-period="month" class="px-3 py-1.5 rounded-md font-medium">Месяц</button>
+            <button data-period="year"  class="px-3 py-1.5 rounded-md font-medium">Год</button>
+          </div>
+          <button class="inline-flex items-center gap-2 bg-white border border-black/5 rounded-lg px-3 py-2 text-sm font-medium hover:bg-surface">
+            <i data-lucide="calendar"></i> Произвольный
+          </button>
+        </div>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -989,12 +1024,12 @@
           <div class="text-2xl font-bold mt-1 text-danger">₾ 61 240</div>
         </div>
         <div class="bg-white rounded-xl2 shadow-card p-5">
-          <div class="text-xs uppercase tracking-wide text-ink-muted">Выплачено за месяц</div>
-          <div class="text-2xl font-bold mt-1">₾ 124 380</div>
+          <div class="text-xs uppercase tracking-wide text-ink-muted">Выплачено <span data-period-label class="lowercase normal-case">за неделю</span></div>
+          <div class="text-2xl font-bold mt-1" data-kpi="paidOut">₾ 32 180</div>
         </div>
         <div class="bg-white rounded-xl2 shadow-card p-5">
           <div class="text-xs uppercase tracking-wide text-ink-muted">Средняя выплата</div>
-          <div class="text-2xl font-bold mt-1">₾ 2 845</div>
+          <div class="text-2xl font-bold mt-1" data-kpi="avgPayout">₾ 2 145</div>
         </div>
       </div>
 
@@ -1677,37 +1712,70 @@
 
   showPage((location.hash || '#dashboard').slice(1));
 
-  /* ====== DASHBOARD PERIOD SWITCH ====== */
+  /* ====== GLOBAL PERIOD SWITCH ====== */
   const periodData = {
-    today: { label:'за сегодня', turnover:'₾ 18 520',   orders:'12',    avg:'₾ 1 543', profit:'₾ 530',     margin:'2,9%', commission:'₾ 463',     delivery:'₾ 70',     deliveryMargin:'~₾ 6' },
-    week:  { label:'за неделю',  turnover:'₾ 142 780',  orders:'87',    avg:'₾ 1 642', profit:'₾ 4 000',   margin:'2,8%', commission:'₾ 3 570',   delivery:'₾ 430',    deliveryMargin:'~₾ 5' },
-    month: { label:'за месяц',   turnover:'₾ 528 940',  orders:'342',   avg:'₾ 1 546', profit:'₾ 14 944',  margin:'2,8%', commission:'₾ 13 224',  delivery:'₾ 1 720',  deliveryMargin:'~₾ 5' },
-    year:  { label:'за год',     turnover:'₾ 6 124 800', orders:'4 128', avg:'₾ 1 484', profit:'₾ 174 320', margin:'2,8%', commission:'₾ 153 120', delivery:'₾ 21 200', deliveryMargin:'~₾ 5' },
+    today: {
+      label:'за сегодня',
+      turnover:'₾ 18 520', orders:'12', avg:'₾ 1 543',
+      profit:'₾ 530', margin:'2,9%', profitCommission:'₾ 463', profitDelivery:'₾ 70', deliveryMargin:'~₾ 6',
+      ordTotal:'12', ordProcessing:'4', ordPending:'1', ordClosed:'5',
+      sellerSalesLabel:'Продаж сегодня',
+      courierCommission:'₾ 184', courierReceived:'₾ 5 280', courierReceivedCount:'4 перевода',
+      paidOut:'₾ 4 220', avgPayout:'₾ 1 407',
+    },
+    week: {
+      label:'за неделю',
+      turnover:'₾ 142 780', orders:'87', avg:'₾ 1 642',
+      profit:'₾ 4 000', margin:'2,8%', profitCommission:'₾ 3 570', profitDelivery:'₾ 430', deliveryMargin:'~₾ 5',
+      ordTotal:'87', ordProcessing:'28', ordPending:'12', ordClosed:'34',
+      sellerSalesLabel:'Продаж за неделю',
+      courierCommission:'₾ 1 245', courierReceived:'₾ 28 460', courierReceivedCount:'18 переводов',
+      paidOut:'₾ 32 180', avgPayout:'₾ 2 145',
+    },
+    month: {
+      label:'за месяц',
+      turnover:'₾ 528 940', orders:'342', avg:'₾ 1 546',
+      profit:'₾ 14 944', margin:'2,8%', profitCommission:'₾ 13 224', profitDelivery:'₾ 1 720', deliveryMargin:'~₾ 5',
+      ordTotal:'342', ordProcessing:'42', ordPending:'36', ordClosed:'264',
+      sellerSalesLabel:'Продаж за месяц',
+      courierCommission:'₾ 4 280', courierReceived:'₾ 78 920', courierReceivedCount:'42 перевода',
+      paidOut:'₾ 124 380', avgPayout:'₾ 2 845',
+    },
+    year: {
+      label:'за год',
+      turnover:'₾ 6 124 800', orders:'4 128', avg:'₾ 1 484',
+      profit:'₾ 174 320', margin:'2,8%', profitCommission:'₾ 153 120', profitDelivery:'₾ 21 200', deliveryMargin:'~₾ 5',
+      ordTotal:'4 128', ordProcessing:'68', ordPending:'52', ordClosed:'3 980',
+      sellerSalesLabel:'Продаж за год',
+      courierCommission:'₾ 51 360', courierReceived:'₾ 942 800', courierReceivedCount:'498 переводов',
+      paidOut:'₾ 1 488 220', avgPayout:'₾ 2 988',
+    },
   };
-  const periodSwitch = document.getElementById('periodSwitch');
-  if (periodSwitch) {
-    periodSwitch.addEventListener('click', e => {
-      const btn = e.target.closest('[data-period]');
-      if (!btn) return;
-      const key = btn.dataset.period;
-      const d = periodData[key];
-      if (!d) return;
-      periodSwitch.querySelectorAll('[data-period]').forEach(b => {
-        b.classList.remove('bg-brand', 'text-white');
-      });
-      btn.classList.add('bg-brand', 'text-white');
-      document.querySelectorAll('[data-period-label]').forEach(el => el.textContent = d.label);
-      const set = (k, v) => document.querySelectorAll('[data-kpi="' + k + '"]').forEach(el => el.textContent = v);
-      set('turnover', d.turnover);
-      set('orders', d.orders);
-      set('avg', d.avg);
-      set('profit', d.profit);
-      set('margin', d.margin);
-      set('profitCommission', d.commission);
-      set('profitDelivery', d.delivery);
-      set('deliveryMargin', d.deliveryMargin);
+  let currentPeriod = 'week';
+
+  function applyPeriod(key) {
+    const d = periodData[key];
+    if (!d) return;
+    currentPeriod = key;
+    document.querySelectorAll('.period-switch [data-period]').forEach(b => {
+      const active = b.dataset.period === key;
+      b.classList.toggle('bg-brand', active);
+      b.classList.toggle('text-white', active);
     });
+    document.querySelectorAll('[data-period-label]').forEach(el => el.textContent = d.label);
+    for (const k of Object.keys(d)) {
+      if (k === 'label') continue;
+      document.querySelectorAll('[data-kpi="' + k + '"]').forEach(el => el.textContent = d[k]);
+    }
   }
+
+  document.addEventListener('click', e => {
+    const btn = e.target.closest('.period-switch [data-period]');
+    if (!btn) return;
+    applyPeriod(btn.dataset.period);
+  });
+
+  applyPeriod(currentPeriod);
 </script>
 </body>
 </html>
