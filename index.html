@@ -169,63 +169,64 @@
         </div>
       </section>
 
-      <!-- KPI period-dependent -->
-      <section class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+      <!-- Net profit banner -->
+      <section class="rounded-xl2 shadow-card p-6 text-white" style="background:linear-gradient(135deg,#09AD64 0%,#067A48 100%)">
+        <div class="flex items-end justify-between gap-4 flex-wrap">
+          <div>
+            <div class="text-xs uppercase tracking-wide text-white/80">Чистая прибыль <span data-period-label class="lowercase">за неделю</span></div>
+            <div class="text-4xl font-bold mt-1" data-kpi="profit">₾ 4 026</div>
+            <div class="text-sm text-white/80 mt-1.5">Маржинальность <span data-kpi="margin" class="font-semibold">2,8%</span> · с оборота <span data-kpi="buyerGoods" class="font-semibold">₾ 142 780</span></div>
+          </div>
+          <div class="w-14 h-14 rounded-xl bg-white/15 grid place-items-center"><i data-lucide="piggy-bank" style="width:28px;height:28px"></i></div>
+        </div>
+      </section>
+
+      <!-- 5 detail KPI -->
+      <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
 
         <div class="bg-white rounded-xl2 shadow-card p-5">
-          <div class="flex items-start justify-between">
-            <div>
-              <div class="text-xs uppercase tracking-wide text-ink-muted">Оборот <span data-period-label class="lowercase">за неделю</span></div>
-              <div class="text-2xl font-bold mt-1" data-kpi="turnover">₾ 142 780</div>
-              <div class="text-xs text-ink-muted mt-1"><span data-kpi="orders">87</span> заказов · ср. чек <span data-kpi="avg">₾ 1 642</span></div>
-            </div>
-            <div class="w-10 h-10 rounded-xl bg-brand-50 text-brand grid place-items-center"><i data-lucide="trending-up"></i></div>
+          <div class="inline-flex items-center gap-1.5 text-[11px] font-semibold text-brand tracking-wide uppercase">
+            <i data-lucide="arrow-down-left" style="width:14px;height:14px"></i> От покупателей
           </div>
-          <div class="mt-3 flex items-end gap-1 h-8">
-            <div class="bar" style="height:40%"></div>
-            <div class="bar" style="height:62%"></div>
-            <div class="bar" style="height:48%"></div>
-            <div class="bar" style="height:78%"></div>
-            <div class="bar" style="height:55%"></div>
-            <div class="bar" style="height:88%"></div>
-            <div class="bar" style="height:70%"></div>
-          </div>
+          <div class="text-xs text-ink-muted mt-3">Сбор за доставку</div>
+          <div class="text-2xl font-bold mt-1 text-brand-700" data-kpi="buyerDelivery">₾ 630</div>
+          <div class="text-xs text-ink-muted mt-1.5">Оплата картой → нам</div>
         </div>
 
         <div class="bg-white rounded-xl2 shadow-card p-5">
-          <div class="flex items-start justify-between">
-            <div>
-              <div class="text-xs uppercase tracking-wide text-ink-muted">Чистая прибыль <span data-period-label class="lowercase">за неделю</span></div>
-              <div class="text-2xl font-bold mt-1 text-brand-700" data-kpi="profit">₾ 4 000</div>
-              <div class="text-xs text-ink-muted mt-1">Маржинальность <span data-kpi="margin" class="font-semibold text-ink">2,8%</span></div>
-            </div>
-            <div class="w-10 h-10 rounded-xl bg-brand-50 text-brand grid place-items-center"><i data-lucide="piggy-bank"></i></div>
+          <div class="inline-flex items-center gap-1.5 text-[11px] font-semibold text-brand tracking-wide uppercase">
+            <i data-lucide="arrow-down-left" style="width:14px;height:14px"></i> От покупателей
           </div>
-          <div class="mt-3 text-xs text-ink-muted">Комиссия + наценка на доставку</div>
+          <div class="text-xs text-ink-muted mt-3">Оплата за товар</div>
+          <div class="text-2xl font-bold mt-1 text-brand-700" data-kpi="buyerGoods">₾ 142 780</div>
+          <div class="text-xs text-ink-muted mt-1.5">Онлайн и через курьера</div>
         </div>
 
         <div class="bg-white rounded-xl2 shadow-card p-5">
-          <div class="flex items-start justify-between">
-            <div>
-              <div class="text-xs uppercase tracking-wide text-ink-muted">Комиссия с продаж</div>
-              <div class="text-2xl font-bold mt-1" data-kpi="profitCommission">₾ 3 570</div>
-              <div class="text-xs text-ink-muted mt-1">2,5% от оборота</div>
-            </div>
-            <div class="w-10 h-10 rounded-xl bg-cyan/30 text-info grid place-items-center"><i data-lucide="percent"></i></div>
+          <div class="inline-flex items-center gap-1.5 text-[11px] font-semibold text-danger tracking-wide uppercase">
+            <i data-lucide="arrow-up-right" style="width:14px;height:14px"></i> Курьеру
           </div>
-          <div class="mt-3 text-xs text-ink-muted">Удерживается с каждой продажи продавца</div>
+          <div class="text-xs text-ink-muted mt-3">За доставку</div>
+          <div class="text-2xl font-bold mt-1 text-danger" data-kpi="courierDelivery">₾ 174</div>
+          <div class="text-xs text-ink-muted mt-1.5">Фикс. ставка за заказ</div>
         </div>
 
         <div class="bg-white rounded-xl2 shadow-card p-5">
-          <div class="flex items-start justify-between">
-            <div>
-              <div class="text-xs uppercase tracking-wide text-ink-muted">Прибыль с доставки</div>
-              <div class="text-2xl font-bold mt-1" data-kpi="profitDelivery">₾ 430</div>
-              <div class="text-xs text-ink-muted mt-1">Наценка <span data-kpi="deliveryMargin" class="font-semibold text-ink">~₾ 5</span> на заказ</div>
-            </div>
-            <div class="w-10 h-10 rounded-xl bg-warn/20 text-amber-700 grid place-items-center"><i data-lucide="truck"></i></div>
+          <div class="inline-flex items-center gap-1.5 text-[11px] font-semibold text-danger tracking-wide uppercase">
+            <i data-lucide="arrow-up-right" style="width:14px;height:14px"></i> Курьеру
           </div>
-          <div class="mt-3 text-xs text-ink-muted">Доставочный сбор минус выплата курьеру</div>
+          <div class="text-xs text-ink-muted mt-3">2,5% с товара</div>
+          <div class="text-2xl font-bold mt-1 text-danger" data-kpi="courierGoodsFee">₾ 3 570</div>
+          <div class="text-xs text-ink-muted mt-1.5">Комиссия за обработку</div>
+        </div>
+
+        <div class="bg-white rounded-xl2 shadow-card p-5 ring-2 ring-brand/30">
+          <div class="inline-flex items-center gap-1.5 text-[11px] font-semibold text-brand-700 tracking-wide uppercase">
+            <i data-lucide="wallet" style="width:14px;height:14px"></i> Наш доход
+          </div>
+          <div class="text-xs text-ink-muted mt-3">2,5% с товара</div>
+          <div class="text-2xl font-bold mt-1 text-brand-700" data-kpi="ourCommission">₾ 3 570</div>
+          <div class="text-xs text-ink-muted mt-1.5">Комиссия маркетплейса</div>
         </div>
       </section>
 
@@ -939,8 +940,8 @@
         </div>
         <div class="bg-white rounded-xl2 shadow-card p-5">
           <div class="text-xs uppercase tracking-wide text-ink-muted">Комиссия курьера <span data-period-label class="lowercase normal-case">за неделю</span></div>
-          <div class="text-2xl font-bold mt-1" data-kpi="courierCommission">₾ 1 245</div>
-          <div class="text-xs text-ink-muted mt-2">~10% от оборота</div>
+          <div class="text-2xl font-bold mt-1" data-kpi="courierGoodsFee">₾ 3 570</div>
+          <div class="text-xs text-ink-muted mt-2">2,5% от оборота товаров</div>
         </div>
         <div class="bg-white rounded-xl2 shadow-card p-5">
           <div class="text-xs uppercase tracking-wide text-ink-muted">Получено <span data-period-label class="lowercase normal-case">за неделю</span></div>
@@ -973,8 +974,8 @@
                 <td class="px-5 py-3.5 text-info font-semibold">#UN-10428</td>
                 <td class="px-5 py-3.5"><a class="ent" target="_blank" rel="noopener" href="https://unlim.ge/ru/user/44444444-4444-4444-4444-444444444444/posts">Sport Line</a></td>
                 <td class="px-5 py-3.5 text-right">₾ 420,00</td>
-                <td class="px-5 py-3.5 text-right text-ink-muted">₾ 42,00</td>
-                <td class="px-5 py-3.5 text-right font-semibold">₾ 378,00</td>
+                <td class="px-5 py-3.5 text-right text-ink-muted">₾ 10,50</td>
+                <td class="px-5 py-3.5 text-right font-semibold">₾ 409,50</td>
                 <td class="px-5 py-3.5 text-right"><button data-order="UN-10428" class="bg-brand text-white text-sm font-semibold rounded-lg px-3 py-1.5 hover:bg-brand-600">Подтвердить</button></td>
               </tr>
               <tr class="hover:bg-surface/60">
@@ -982,8 +983,8 @@
                 <td class="px-5 py-3.5 text-info font-semibold">#UN-10425</td>
                 <td class="px-5 py-3.5"><a class="ent" target="_blank" rel="noopener" href="https://unlim.ge/ru/user/33333333-3333-3333-3333-333333333333/posts">Home &amp; Co</a></td>
                 <td class="px-5 py-3.5 text-right">₾ 189,00</td>
-                <td class="px-5 py-3.5 text-right text-ink-muted">₾ 18,90</td>
-                <td class="px-5 py-3.5 text-right font-semibold">₾ 170,10</td>
+                <td class="px-5 py-3.5 text-right text-ink-muted">₾ 4,73</td>
+                <td class="px-5 py-3.5 text-right font-semibold">₾ 184,27</td>
                 <td class="px-5 py-3.5 text-right"><button data-order="UN-10425" class="bg-brand text-white text-sm font-semibold rounded-lg px-3 py-1.5 hover:bg-brand-600">Подтвердить</button></td>
               </tr>
               <tr class="hover:bg-surface/60">
@@ -991,8 +992,8 @@
                 <td class="px-5 py-3.5 text-info font-semibold">#UN-10419</td>
                 <td class="px-5 py-3.5"><a class="ent" target="_blank" rel="noopener" href="https://unlim.ge/ru/user/11111111-1111-1111-1111-111111111111/posts">Geo Tech</a></td>
                 <td class="px-5 py-3.5 text-right">₾ 312,00</td>
-                <td class="px-5 py-3.5 text-right text-ink-muted">₾ 31,20</td>
-                <td class="px-5 py-3.5 text-right font-semibold">₾ 280,80</td>
+                <td class="px-5 py-3.5 text-right text-ink-muted">₾ 7,80</td>
+                <td class="px-5 py-3.5 text-right font-semibold">₾ 304,20</td>
                 <td class="px-5 py-3.5 text-right"><button data-order="UN-10419" class="bg-brand text-white text-sm font-semibold rounded-lg px-3 py-1.5 hover:bg-brand-600">Подтвердить</button></td>
               </tr>
             </tbody>
@@ -1470,12 +1471,12 @@
       seller: ['Tech Store', U.techStore],
       product: ['AirPods Pro 2', 'https://unlim.ge/ru/post/airpods-pro-2-2026-05-28-12-08-15'],
       buyer: ['Mariam B.', U.mariam],
-      itemPrice: '₾ 749,00', delivery: '₾ 8,00', courierFee: '₾ 74,90', payout: '₾ 749,00',
-      paymentNote: 'Оплата наличными при получении. Деньги у курьерской службы, ожидаем перевод (10% удержит курьер).',
+      itemPrice: '₾ 749,00', delivery: '₾ 8,00', courierFee: '₾ 18,73', payout: '₾ 749,00',
+      paymentNote: 'Оплата наличными при получении. Деньги у курьерской службы, ожидаем перевод (2,5% удержит курьер).',
       timeline: [
         { s:'done',    t:'28.05 12:08', label:'Оплата доставки получена', sub:'Картой онлайн → наш счёт', amt:'+₾ 8,00' },
         { s:'active',  t:'28.05 16:40', label:'Оплата наличными курьеру', sub:'Сумма в кассе курьерской службы', amt:'₾ 749,00' },
-        { s:'pending', t:'',            label:'Перевод от курьера',        sub:'Ожидаем перевод за вычетом комиссии', amt:'+₾ 674,10' },
+        { s:'pending', t:'',            label:'Перевод от курьера',        sub:'Ожидаем перевод за вычетом комиссии', amt:'+₾ 730,27' },
         { s:'pending', t:'',            label:'Выплата продавцу',          sub:'', amt:'–₾ 749,00' },
       ],
       log: [
@@ -1491,12 +1492,12 @@
       seller: ['Sport Line', U.sportLine],
       product: ['Кроссовки Nike Pegasus', 'https://unlim.ge/ru/post/nike-pegasus-2026-05-27-18-41-03'],
       buyer: ['Giorgi M.', U.giorgi],
-      itemPrice: '₾ 420,00', delivery: '₾ 7,00', courierFee: '₾ 42,00', payout: '₾ 420,00',
+      itemPrice: '₾ 420,00', delivery: '₾ 7,00', courierFee: '₾ 10,50', payout: '₾ 420,00',
       paymentNote: 'Курьер прислал реестр с переводом. Подтвердите фактическое поступление на счёт.',
       timeline: [
         { s:'done',   t:'27.05 18:41', label:'Оплата доставки получена',  sub:'Картой онлайн → наш счёт', amt:'+₾ 7,00' },
         { s:'done',   t:'27.05 22:10', label:'Оплата наличными курьеру',   sub:'Принято курьером', amt:'₾ 420,00' },
-        { s:'active', t:'28.05 09:30', label:'Курьер перевёл деньги',      sub:'Ожидает подтверждения от бухгалтера', amt:'+₾ 378,00' },
+        { s:'active', t:'28.05 09:30', label:'Курьер перевёл деньги',      sub:'Ожидает подтверждения от бухгалтера', amt:'+₾ 409,50' },
         { s:'pending',t:'',            label:'Выплата продавцу',           sub:'', amt:'–₾ 420,00' },
       ],
       log: [
@@ -1513,12 +1514,12 @@
       seller: ['Home & Co', U.homeCo],
       product: ['Чайник Bosch TWK', 'https://unlim.ge/ru/post/bosch-twk-kettle-2026-05-27-09-14-22'],
       buyer: ['Nika A.', U.nika],
-      itemPrice: '₾ 189,00', delivery: '₾ 5,00', courierFee: '₾ 18,90', payout: '₾ 189,00',
+      itemPrice: '₾ 189,00', delivery: '₾ 5,00', courierFee: '₾ 4,73', payout: '₾ 189,00',
       paymentNote: 'Оплата наличными при получении. Ожидаем перевод от курьерской службы.',
       timeline: [
         { s:'done',    t:'27.05 09:14', label:'Оплата доставки получена', sub:'Картой онлайн → наш счёт', amt:'+₾ 5,00' },
         { s:'active',  t:'27.05 15:20', label:'Оплата наличными курьеру', sub:'', amt:'₾ 189,00' },
-        { s:'pending', t:'',            label:'Перевод от курьера',        sub:'', amt:'+₾ 170,10' },
+        { s:'pending', t:'',            label:'Перевод от курьера',        sub:'', amt:'+₾ 184,27' },
         { s:'pending', t:'',            label:'Выплата продавцу',          sub:'', amt:'–₾ 189,00' },
       ],
       log: [
@@ -1534,12 +1535,12 @@
       seller: ['Geo Tech', U.geoTech],
       product: ['Кофемолка De\'Longhi', 'https://unlim.ge/ru/post/delonghi-coffee-grinder-2026-05-26-11-30-08'],
       buyer: ['Tamta L.', U.tamta],
-      itemPrice: '₾ 312,00', delivery: '₾ 6,00', courierFee: '₾ 31,20', payout: '₾ 312,00',
+      itemPrice: '₾ 312,00', delivery: '₾ 6,00', courierFee: '₾ 7,80', payout: '₾ 312,00',
       paymentNote: 'Курьер прислал реестр с переводом. Подтвердите получение на счёт.',
       timeline: [
         { s:'done',   t:'26.05 11:30', label:'Оплата доставки получена', sub:'Картой онлайн → наш счёт', amt:'+₾ 6,00' },
         { s:'done',   t:'26.05 17:05', label:'Оплата наличными курьеру', sub:'', amt:'₾ 312,00' },
-        { s:'active', t:'27.05 10:15', label:'Курьер перевёл деньги',     sub:'Ожидает подтверждения', amt:'+₾ 280,80' },
+        { s:'active', t:'27.05 10:15', label:'Курьер перевёл деньги',     sub:'Ожидает подтверждения', amt:'+₾ 304,20' },
         { s:'pending',t:'',            label:'Выплата продавцу',          sub:'', amt:'–₾ 312,00' },
       ],
       log: [
@@ -1720,8 +1721,9 @@
   const periodData = {
     today: {
       label:'за сегодня',
-      turnover:'₾ 18 520', orders:'12', avg:'₾ 1 543',
-      profit:'₾ 530', margin:'2,9%', profitCommission:'₾ 463', profitDelivery:'₾ 70', deliveryMargin:'~₾ 6',
+      profit:'₾ 523', margin:'2,8%',
+      buyerDelivery:'₾ 84', buyerGoods:'₾ 18 520',
+      courierDelivery:'₾ 24', courierGoodsFee:'₾ 463', ourCommission:'₾ 463',
       ordTotal:'12', ordProcessing:'4', ordPending:'1', ordClosed:'5', ordCancelled:'1',
       sellerSalesLabel:'Продаж сегодня',
       salesCnt_GT:'3',  salesAmt_GT:'на ₾ 4 850',
@@ -1729,13 +1731,14 @@
       salesCnt_HC:'4',  salesAmt_HC:'на ₾ 1 820',
       salesCnt_SL:'2',  salesAmt_SL:'на ₾ 1 360',
       salesCnt_BK:'1',  salesAmt_BK:'на ₾ 120',
-      courierCommission:'₾ 184', courierReceived:'₾ 5 280', courierReceivedCount:'4 перевода',
+      courierReceived:'₾ 5 280', courierReceivedCount:'4 перевода',
       paidOut:'₾ 4 220', avgPayout:'₾ 1 407',
     },
     week: {
       label:'за неделю',
-      turnover:'₾ 142 780', orders:'87', avg:'₾ 1 642',
-      profit:'₾ 4 000', margin:'2,8%', profitCommission:'₾ 3 570', profitDelivery:'₾ 430', deliveryMargin:'~₾ 5',
+      profit:'₾ 4 026', margin:'2,8%',
+      buyerDelivery:'₾ 630', buyerGoods:'₾ 142 780',
+      courierDelivery:'₾ 174', courierGoodsFee:'₾ 3 570', ourCommission:'₾ 3 570',
       ordTotal:'87', ordProcessing:'28', ordPending:'12', ordClosed:'34', ordCancelled:'5',
       sellerSalesLabel:'Продаж за неделю',
       salesCnt_GT:'52',  salesAmt_GT:'на ₾ 84 220',
@@ -1743,13 +1746,14 @@
       salesCnt_HC:'64',  salesAmt_HC:'на ₾ 28 940',
       salesCnt_SL:'28',  salesAmt_SL:'на ₾ 19 280',
       salesCnt_BK:'18',  salesAmt_BK:'на ₾ 2 140',
-      courierCommission:'₾ 1 245', courierReceived:'₾ 28 460', courierReceivedCount:'18 переводов',
+      courierReceived:'₾ 28 460', courierReceivedCount:'18 переводов',
       paidOut:'₾ 32 180', avgPayout:'₾ 2 145',
     },
     month: {
       label:'за месяц',
-      turnover:'₾ 528 940', orders:'342', avg:'₾ 1 546',
-      profit:'₾ 14 944', margin:'2,8%', profitCommission:'₾ 13 224', profitDelivery:'₾ 1 720', deliveryMargin:'~₾ 5',
+      profit:'₾ 14 934', margin:'2,8%',
+      buyerDelivery:'₾ 2 394', buyerGoods:'₾ 528 940',
+      courierDelivery:'₾ 684', courierGoodsFee:'₾ 13 224', ourCommission:'₾ 13 224',
       ordTotal:'342', ordProcessing:'42', ordPending:'36', ordClosed:'264', ordCancelled:'18',
       sellerSalesLabel:'Продаж за месяц',
       salesCnt_GT:'198', salesAmt_GT:'на ₾ 312 400',
@@ -1757,13 +1761,14 @@
       salesCnt_HC:'248', salesAmt_HC:'на ₾ 109 600',
       salesCnt_SL:'108', salesAmt_SL:'на ₾ 72 480',
       salesCnt_BK:'72',  salesAmt_BK:'на ₾ 8 800',
-      courierCommission:'₾ 4 280', courierReceived:'₾ 78 920', courierReceivedCount:'42 перевода',
+      courierReceived:'₾ 78 920', courierReceivedCount:'42 перевода',
       paidOut:'₾ 124 380', avgPayout:'₾ 2 845',
     },
     year: {
       label:'за год',
-      turnover:'₾ 6 124 800', orders:'4 128', avg:'₾ 1 484',
-      profit:'₾ 174 320', margin:'2,8%', profitCommission:'₾ 153 120', profitDelivery:'₾ 21 200', deliveryMargin:'~₾ 5',
+      profit:'₾ 173 760', margin:'2,8%',
+      buyerDelivery:'₾ 28 896', buyerGoods:'₾ 6 124 800',
+      courierDelivery:'₾ 8 256', courierGoodsFee:'₾ 153 120', ourCommission:'₾ 153 120',
       ordTotal:'4 128', ordProcessing:'68', ordPending:'52', ordClosed:'3 980', ordCancelled:'142',
       sellerSalesLabel:'Продаж за год',
       salesCnt_GT:'2 380', salesAmt_GT:'на ₾ 3 720 000',
@@ -1771,7 +1776,7 @@
       salesCnt_HC:'2 980', salesAmt_HC:'на ₾ 1 320 000',
       salesCnt_SL:'1 296', salesAmt_SL:'на ₾ 870 200',
       salesCnt_BK:'864',   salesAmt_BK:'на ₾ 105 600',
-      courierCommission:'₾ 51 360', courierReceived:'₾ 942 800', courierReceivedCount:'498 переводов',
+      courierReceived:'₾ 942 800', courierReceivedCount:'498 переводов',
       paidOut:'₾ 1 488 220', avgPayout:'₾ 2 988',
     },
   };
